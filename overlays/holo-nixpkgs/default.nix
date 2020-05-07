@@ -259,7 +259,11 @@ in
     reboot
   '';
 
-  hydra = previous.hydra.overrideAttrs (
+  inherit (callPackage ./hpos-update {}) hpos-update-cli;
+
+  hydra = let
+    previousHydra = previous.hydra-migration;
+  in previousHydra.overrideAttrs (
     super: {
       doCheck = false;
       patches = [
