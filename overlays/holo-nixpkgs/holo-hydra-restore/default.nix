@@ -6,8 +6,8 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "holo-hydra-create";
-    rev = "cdc69008ff895fcfebf992a80c49efccc5bb476b";
-    sha256 = "0ir0pahm73j6gcaz4df2h2gwyy0ik1xji83qpqrir18ishla224r";
+    rev = "0fdfee326203168eaf21141cbdc4899a5e979327";
+    sha256 = "0haly8mbhfhbswwg6x1q94dmz9gnwf7g90qpwhza169zcn422dbj";
   };
 
   buildInputs = [ openssl restic ];
