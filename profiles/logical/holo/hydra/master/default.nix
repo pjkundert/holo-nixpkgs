@@ -115,4 +115,6 @@ in
     "d /var/cache/hydra           0755 hydra hydra -  -"
     "d /var/cache/hydra/nar-cache 0775 hydra hydra 1d -"
   ];
+
+  environment.systemPackages = [ pkgs.holo-hydra-restore ];
 }
