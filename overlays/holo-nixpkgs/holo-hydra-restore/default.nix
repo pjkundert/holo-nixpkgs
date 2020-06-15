@@ -13,9 +13,7 @@ stdenv.mkDerivation rec {
   buildInputs = [ openssl restic ];
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp holo-hydra-restore $out/bin/
-    chmod +x $out/bin/holo-hydra-restore
+    install -Dm +x holo-hydra-restore $out/bin/holo-hydra-restore
   '';
 
   meta.platforms = lib.platforms.linux;
