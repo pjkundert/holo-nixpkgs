@@ -1,4 +1,6 @@
-{ lib, stdenv, fetchFromGitHub, openssl, restic }:
+{ stdenv, fetchFromGitHub, makeWrapper, openssl, restic }:
+
+with stdenv.lib;
 
 stdenv.mkDerivation rec {
   name = "holo-hydra-restore";
@@ -10,12 +12,14 @@ stdenv.mkDerivation rec {
     sha256 = "0haly8mbhfhbswwg6x1q94dmz9gnwf7g90qpwhza169zcn422dbj";
   };
 
-  buildInputs = [ openssl restic ];
+  nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
-    install -Dm +x holo-hydra-restore $out/bin/holo-hydra-restore
+    install -Dm +x holo-hydra-restore $out/bin/${name}
+    wrapProgram $out/bin/${name} \
+      --prefix PATH : ${makeBinPath [ openssl restic ]}
   '';
 
-  meta.platforms = lib.platforms.linux;
+  meta.platforms = platforms.linux;
   doCheck = false;
 }
