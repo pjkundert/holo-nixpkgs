@@ -15,6 +15,8 @@
     StrictHostKeyChecking accept-new
   '';
 
+  system.defaultChannel = "https://hydra.holo.host/channel/custom/holo-nixpkgs/hydra/holo-nixpkgs";
+
   system.holo-nixpkgs.autoUpgrade = {
     enable = true;
     dates = "*:0/10";
