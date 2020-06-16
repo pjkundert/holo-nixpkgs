@@ -197,6 +197,8 @@ in
 
   holo-cli = callPackage ./holo-cli {};
 
+  holo-hydra-restore = callPackage ./holo-hydra-restore {};
+
   holo-nixpkgs.path = gitignoreSource ../..;
 
   holo-nixpkgs-tests = recurseIntoAttrs (
