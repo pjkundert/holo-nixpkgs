@@ -60,11 +60,8 @@ in
 
   environment.noXlibs = true;
 
-<<<<<<< HEAD
-=======
-  environment.systemPackages = [ hpos-reset bump-dna-cli hpos-admin-client hpos-update jq curl perl git ];
+  environment.systemPackages = [ hpos-reset bump-dna-cli hpos-admin-client hpos-update ];
 
->>>>>>> 4a10785... overlays: add hpos-update script and enable in profiles
   networking.firewall.allowedTCPPorts = [ 443 ];
 
   networking.hostName = lib.mkOverride 1100 "hpos";
