@@ -245,9 +245,7 @@ in
     reboot
   '';
 
-  hpos-update = callPackage ./hpos-update {
-    stdenv = stdenvNoCC;
-  };
+  inherit (callPackage ./hpos-update {}) hpos-update-cli;
 
   hydra = previous.hydra.overrideAttrs (
     super: {
