@@ -60,7 +60,7 @@ in
 
   environment.noXlibs = true;
 
-  environment.systemPackages = [ hpos-reset bump-dna-cli hpos-admin-client hpos-update-cli ];
+  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli ];
 
   networking.firewall.allowedTCPPorts = [ 443 ];
 
