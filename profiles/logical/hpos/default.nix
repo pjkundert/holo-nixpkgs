@@ -60,6 +60,8 @@ in
 
   environment.noXlibs = true;
 
+  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli ];
+
   networking.firewall.allowedTCPPorts = [ 443 ];
 
   networking.hostName = lib.mkOverride 1100 "hpos";
