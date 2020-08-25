@@ -18,10 +18,11 @@ in
   '';
 
   sdImage.populateRootCommands = with pkgs; ''
+    mkdir -p ./files/boot
     ${buildPackages.extlinux-conf-builder} \
       -b ${holoport-nano-dtb} \
       -c ${config.system.build.toplevel} \
-      -d boot \
+      -d ./files/boot \
       -t 1
   '';
 }
