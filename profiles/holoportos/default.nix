@@ -8,10 +8,6 @@ let
   conductorHome = config.users.users.holochain-conductor.home;
 
   dnas = with dnaPackages; [
-    happ-store
-    holo-hosting-app
-    hylo-holo-dnas
-    holofuel
     servicelogger
   ];
 
