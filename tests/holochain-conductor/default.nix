@@ -17,29 +17,25 @@ makeTest {
   };
 
   testScript = ''
-    startAll;
+    start_all()
 
-    $machine->succeed(
-      "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos-config.json"
-    );
+    machine.succeed(
+        "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos-config.json"
+    )
 
-    $machine->succeed(
-      "hpos-config-into-keystore < /etc/hpos-config.json > /var/lib/holochain-conductor/holo-keystore 2> /var/lib/holochain-conductor/holo-keystore.pub"
-    );
+    machine.systemctl("restart holochain-conductor.service")
+    machine.wait_for_unit("holochain-conductor.service")
+    machine.wait_for_open_port("42211")
 
-    $machine->systemctl("restart holochain-conductor.service");
-    $machine->waitForUnit("holochain-conductor.service");
-    $machine->waitForOpenPort("42211");
+    expected_dnas = "holofuel\nservicelogger\n"
+    actual_dnas = machine.succeed(
+        "holo admin --port 42211 interface | jq -r '.[2].instances[].id'"
+    )
 
-    my $expected_dnas = "happ-store\nholo-hosting-app\nholofuel\nservicelogger\n";
-    my $actual_dnas = $machine->succeed(
-      "holo admin --port 42211 interface | jq -r '.[2].instances[].id'"
-    );
+    assert actual_dnas == expected_dnas, "unexpected dnas"
 
-    die "unexpected dnas" unless $actual_dnas eq $expected_dnas;
-
-    $machine->shutdown;
-  '';
+    machine.shutdown()
+  ''
 
   meta.platforms = [ "x86_64-linux" ];
 }

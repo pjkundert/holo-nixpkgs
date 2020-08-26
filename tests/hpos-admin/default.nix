@@ -28,29 +28,53 @@ makeTest {
   };
 
   testScript = ''
-    startAll;
+    startAll()
 
-    $machine->succeed(
-      "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos-config.json"
-    );
+    machine.succeed(
+        "hpos-config-gen-cli --email test\@holo.host --password : --seed-from {./seed.txt} > /etc/hpos-config.json"
+    )
 
-    $machine->systemctl("start hpos-admin.service");
-    $machine->waitForUnit("hpos-admin.service");
-    $machine->waitForFile("/run/hpos-admin.sock");
+    machine.succeed("rm -rf /var/lib/holochain-conductor/servicelogger")
+    machine.succeed("systemctl restart holochain-conductor.service")
+    machine.wait_for_unit("holochain-conductor.service")
+    machine.wait_for_open_port("42222")
 
-    $machine->succeed("hpos-admin-client --url=http://localhost put-settings example KbFzEiWEmM1ogbJbee2fkrA1");
+    machine.succeed("systemctl start hpos-admin.service")
+    machine.wait_for_unit("hpos-admin.service")
+    machine.wait_for_file("/run/hpos-admin.sock")
+    machine.succeed("hpos-admin-client --url=http://localhost put-settings example KbFzEiWEmM1ogbJbee2fkrA1")
+    expected_settings = "{" +
+        "'admin': {'email': 'test\@holo.host', 'public_key': 'zQJsyuGmTKhMCJQvZZmXCwJ8/nbjSLF6cEe0vNOJqfM'}, " +
+        "'example': 'KbFzEiWEmM1ogbJbee2fkrA1'" +
+    "}"
+    actual_settings = machine.succeed("hpos-admin-client --url=http://localhost get-settings").strip()
+    assert actual_settings == expected_settings, "unexpected settings"
 
-    my $expected_settings = "{" .
-      "'admin': {'email': 'test\@holo.host', 'public_key': 'zQJsyuGmTKhMCJQvZZmXCwJ8/nbjSLF6cEe0vNOJqfM'}, " .
-      "'example': 'KbFzEiWEmM1ogbJbee2fkrA1'" .
-    "}";
+    with subtest("Testing hosted_happs api when there is not instances running (So the traffic happs should be 0)"):
+        expected_file = "'file': '/var/lib/holochain-conductor/dnas/"
+        expected_date = "'happ-publish-date': '2020/01/31'"
+        expected_publisher = "'happ-publisher': 'Holo Ltd'"
+        expected_url ="'happ-url': 'https://holofuel.holo.host'"
+        expected_title = "'happ-title': 'HoloFuel'"
+        expected_hosted = "'holo-hosted': True"
+        expected_number_instances = "'number_instances': 1"
+        expected_stats = "'stats': {'traffic': {'start_date': None, 'total_zome_calls': 0, 'value': []}"
 
-    my $actual_settings = $machine->succeed("hpos-admin-client --url=http://localhost get-settings");
-    chomp($actual_settings);
+        actual_hosted_happs = machine.succeed("hpos-admin-client --url=http://localhost get-hosted-happs").strip()
 
-    die "unexpected settings" unless $actual_settings eq $expected_settings;
+        print(actual_hosted_happs.hosted_happs)
 
-    $machine->shutdown;
+        assert expected_file in actual_hosted_happs, "unexpected_hosted_happs_file"
+        assert expected_date in actual_hosted_happs, "unexpected_hosted_happs_date"
+        assert expected_publisher in actual_hosted_happs, "unexpected_hosted_happs_publisher"
+        assert expected_url in actual_hosted_happs, "unexpected_hosted_happs_url"
+        assert expected_title in actual_hosted_happs, "unexpected_hosted_happs_title"
+        assert expected_hosted in actual_hosted_happs, "unexpected_hosted_happs_hosted"
+        assert expected_number_instances in actual_hosted_happs, "unexpected_hosted_happs_number_instances"
+        assert expected_stats in actual_hosted_happs, "unexpected_hosted_happs_stats"
+
+    machine.shutdown()
+
   '';
 
   meta.platforms = lib.platforms.linux;
