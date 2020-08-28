@@ -10,6 +10,12 @@ in
     ../../hardware/holoport-nano
     ../.
   ];
+  
+  nix.package = let
+    nixpkgs-1909-latest = fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.09.tar.gz;
+  in nixpkgs-1909-latest.nix;
+  
+  environment.systemPackages = with pkgs; [ git ];
 
   sdImage.imageName = "${config.system.build.baseName}.img";
 
