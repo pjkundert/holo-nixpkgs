@@ -1,54 +1,14 @@
-# HoloPortOS
+# Branch Information
 
-HoloportOS is an operating system based on [NixOS][nixos] that supports running
-[Holochain][holochain] applications, designed from the ground up to be
-consistent, verifiable, and auditable.
+This branch is specifically set up for building HoloportOS installation images from source. It is not intended to be a standalone branch
 
-[holochain]: https://holochain.org
-[nixos]: https://nixos.org
+#### HoloPort Nano SD Image
 
-## Setup
+On an Aarch64 machine, run:
+`nix-build '<nixpkgs/nixos>' -A config.system.build.sdImage -I nixos-config=./profiles/holoportos-installers/holoport-nano/default.nix`.
 
-### Binary cache
-
-On NixOS, add the following to `/etc/nixos/configuration.nix` and rebuild:
-
-```nix
-{
-  nix.binaryCaches = [
-    "https://cache.holo.host/"
-  ];
-
-  nix.binaryCachePublicKeys = [
-    "cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE="
-  ];
-}
-```
-
-Otherwise, add `https://cache.holo.host/` to `substituters` and
-`cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE=` to
-`trusted-public-keys` in Nix config file:
-
-```
-substituters = https://cache.holo.host/ https://cache.nixos.org/
-trusted-public-keys = cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-```
-
-For single-user installs (`nix-shell -p nix-info --run nix-info` prints
-`multi-user: no`), Nix config file is in `~/.config/nix/nix.conf`.
-
-Otherwise, for multi-user installs, Nix config file is in `/etc/nix/nix.conf`
-and changing it requires root access.
-
-### HoloPortOS
-
-#### HoloPort Nano
-
-Checkout this repo, switch to `master` branch, install [Nix][nix] and run
-`nix-build release.nix -A holoportos-installers.holoport-nano`.
-
-Burn the image to a microSD card with `sudo cp result/sd-image/*.img
-/dev/mmcblkX` (see `lsblk` on Linux and `diskutil list` on macOS for the exact
+Burn the image to a microSD card with `sudo dd if=result/sd-image/*.img
+/dev/sdX` (see `lsblk` on Linux and `diskutil list` on macOS for the exact
 device name).
 
 Connect Ethernet cable to HoloPort Nano, insert the microSD card, and boot.
@@ -62,11 +22,4 @@ If LED starts to blink with red, there was an error during installation.
 Connect over HDMI to see what's going on. To retry, reboot or type
 `holoportos-install` in console.
 
-#### VirtualBox
 
-Download the latest HoloPortOS VirtualBox OVA:
-https://hydra.holo.host/job/holo-nixpkgs/master/holoportos.targets.virtualbox.x86_64-linux/latest/download-by-type/file/ova
-
-Refer to [VirtualBox manual, chapter 1, section 1.15.2](https://www.virtualbox.org/manual/ch01.html#ovf-import-appliance).
-
-[nix]: https://nixos.org/nix/
