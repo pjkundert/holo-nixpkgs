@@ -1,7 +1,6 @@
 {
   imports = [
-    @profile@
-    <holo-nixpkgs/profiles/holoportos>
+    <holo-nixpkgs/profiles/targets/holoport-nano>
     ./hardware-configuration.nix
   ];
 }
