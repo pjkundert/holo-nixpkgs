@@ -12,7 +12,7 @@ in
   ];
   
   nix.package = let
-    nixpkgs-1909-latest = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.09.tar.gz);
+    nixpkgs-1909-latest = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.09.tar.gz) {};
   in nixpkgs-1909-latest.nix;
   
   environment.systemPackages = with pkgs; [ git ];
