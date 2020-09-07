@@ -6,15 +6,13 @@ PATH=@path@:$PATH
 function on_exit {
   # shellcheck disable=SC2181
   if (($?)); then
-    aorura-cli @auroraLedDevice@ --set flash:red
+    echo 'installation failed'
   else
-    aorura-cli @auroraLedDevice@ --set static:green
+    echo 'installation successful'
   fi
 }
 
 trap on_exit EXIT
-
-aorura-cli @auroraLedDevice@ --set flash:orange
 
 @prePhase@
 

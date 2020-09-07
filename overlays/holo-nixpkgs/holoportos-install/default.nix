@@ -2,7 +2,6 @@
 , gitignoreSource
 , runCommand
 , substituteAll
-, aorura-cli
 , bash
 , coreutils
 , e2fsprogs
@@ -10,7 +9,7 @@
 , ubootBananaPim64
 }:
 
-{ auroraLedDevice, channelUrl, target }:
+{ channelUrl, target }:
 
 let
   mkConfiguration = profile: substituteAll {
@@ -26,8 +25,8 @@ let
       mkdir $out && ln -s ${gitignoreSource ../../../.} $out/holo-nixpkgs;
     '';
     configuration = mkConfiguration profile;
-    path = lib.makeBinPath [ aorura-cli coreutils e2fsprogs parted ];
-    inherit bash auroraLedDevice channelUrl prePhase postPhase;
+    path = lib.makeBinPath [ coreutils e2fsprogs parted ];
+    inherit bash channelUrl prePhase postPhase;
   };
 
   targets = {
