@@ -321,6 +321,27 @@ in
           ];
         };
       };
+      holochain-rsm = {
+        rustPlatform = final.makeRustPlatform {
+          inherit (buildPackages.rust.packages.holochain-rsm) cargo rustc;
+        };
+
+        cargo = final.rust.packages.holochain-rsm.rustc;
+        rustc = (
+          rustChannelOf {
+            channel = "stable";
+            date = "2020-08-03";
+            sha256 = "0yvh2ck2vqas164yh01ggj4ckznx04blz3jgbkickfgjm18y269j";
+          }
+        ).rust.override {
+          targets = [
+            "aarch64-unknown-linux-musl"
+            "wasm32-unknown-unknown"
+            "x86_64-pc-windows-gnu"
+            "x86_64-unknown-linux-musl"
+          ];
+        };
+      };
     };
   };
 
