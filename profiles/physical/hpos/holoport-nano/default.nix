@@ -30,5 +30,7 @@
 
   services.automount.enable = true;
 
+  services.automount.enable = true;
+
   services.hpos-led-manager.devicePath = "/dev/ttyS2";
 }
