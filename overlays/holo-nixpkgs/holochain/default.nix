@@ -1,4 +1,4 @@
-{ stdenv, rustPlatform, fetchFromGitHub, perl, CoreServices, Security, libsodium }:
+{ stdenv, rustPlatform, fetchFromGitHub, perl, CoreServices, Security, libsodium, openssl, pkgconfig }:
 
 rustPlatform.buildRustPackage {
   name = "holochain";
@@ -12,9 +12,9 @@ rustPlatform.buildRustPackage {
 
   cargoSha256 = "0q5gsl0pfhxxq44v4hyq9q5670qinz69g0mbyckwpmzsxz4cz7ny";
 
-  nativeBuildInputs = [ perl ];
+  nativeBuildInputs = [ perl pkgconfig ];
 
-  buildInputs = stdenv.lib.optionals stdenv.isDarwin [
+  buildInputs = [ openssl ] ++ stdenv.lib.optionals stdenv.isDarwin [
     CoreServices
     Security
   ];
