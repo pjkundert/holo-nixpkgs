@@ -117,12 +117,6 @@ in
 
   inherit (callPackage "${nixpkgs-mozilla}/package-set.nix" {}) rustChannelOf;
 
-  buildDNA = makeOverridable (
-    callPackage ./build-dna {
-      inherit (rust.packages.nightly) rustPlatform;
-    }
-  );
-
   buildImage = imports:
     let
       system = nixos {
@@ -169,19 +163,6 @@ in
     ${remarshal}/bin/json2toml < ${writeJSON config} > $out
   '';
 
-  dnaHash = dna: builtins.readFile (
-    runCommand "${dna.name}-hash" {} ''
-      ${holochain-rust}/bin/hc hash -p ${dna}/${dna.name}.dna.json \
-        | tail -1 \
-        | cut -d ' ' -f 3- \
-        | tr -d '\n' > $out
-    ''
-  );
-
-  dnaPackages = recurseIntoAttrs (
-    import ./dna-packages final previous
-  );
-
   holo = recurseIntoAttrs {
     buildProfile = profile: buildImage [
       "${holo-nixpkgs.path}/profiles/logical/holo/${profile}"
@@ -191,7 +172,6 @@ in
     hydra-master = holo.buildProfile "hydra/master";
     hydra-minion = holo.buildProfile "hydra/minion";
     router-gateway = holo.buildProfile "router-gateway";
-    sim2h = holo.buildProfile "sim2h";
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
   
@@ -206,15 +186,6 @@ in
   );
 
   holo-update-conductor-config = callPackage ./holo-update-conductor-config {
-    inherit (rust.packages.nightly) rustPlatform;
-  };
-
-  holochain-cli = holochain-rust;
-
-  holochain-conductor = holochain-rust;
-
-  holochain-rust = callPackage ./holochain-rust {
-    inherit (darwin.apple_sdk.frameworks) CoreServices Security;
     inherit (rust.packages.nightly) rustPlatform;
   };
 
