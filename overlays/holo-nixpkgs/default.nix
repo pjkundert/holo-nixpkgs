@@ -11,13 +11,6 @@ let
     sha256 = "00d9c6f0hh553hgmw01lp5639kbqqyqsz66jz35pz8xahmyk5wmw";
   };
 
-  bump-dna = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "bump-dna";
-    rev = "f97d963a3cef41b30a646ada9ba55349d104ed2c";
-    sha256 = "1kpa3r8cwik9r3k3l6p1n3cl0g4bqwm0wp23mgr4ac41x7xpndyk";
-  };
-
   cargo-to-nix = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "cargo-to-nix";
@@ -49,8 +42,8 @@ let
   hp-admin = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hp-admin";
-    rev = "5d252ca9b6ea5b7b324381016fce6842618f28f0";
-    sha256 = "18xdf5dpr1lv2kpbp5xlrpv7h4mns9gvpyj5m49fx5xl6vm3bgx9";
+    rev = "e8cad8561580e028d917685539f44d53025c4ea5";
+    sha256 = "0mvhlgp6nlv069wvbc5nbd8229i3fjzyk0qszlmkv9hp0jyph51y";
   };
 
   hp-admin-crypto = fetchFromGitHub {
@@ -85,8 +78,6 @@ in
     aorura-cli
     aorura-emu
     ;
-
-  inherit (callPackage bump-dna {}) bump-dna-cli;
 
   inherit (callPackage cargo-to-nix {})
     buildRustPackage
@@ -318,10 +309,6 @@ in
   };
 
   wrangler = callPackage ./wrangler {};
-
-  wrapDNA = drv: runCommand (lib.removeSuffix ".dna.json" drv.name) {} ''
-    install -Dm -x ${drv} $out/${drv.name}
-  '';
 
   zerotierone = previous.zerotierone.overrideAttrs (
     super: {
