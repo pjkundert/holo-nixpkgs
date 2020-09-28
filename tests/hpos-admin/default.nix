@@ -1,4 +1,4 @@
-{ makeTest, lib, hpos, hpos-admin-client, hpos-config-gen-cli, hpos-config-into-keystore, jq }:
+{ makeTest, lib, hpos, hpos-admin-client, hpos-config-gen-cli, jq }:
 
 makeTest {
   name = "hpos-admin";
@@ -11,7 +11,6 @@ makeTest {
     environment.systemPackages = [
       hpos-admin-client
       hpos-config-gen-cli
-      hpos-config-into-keystore
       jq
     ];
 

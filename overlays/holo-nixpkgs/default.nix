@@ -109,7 +109,6 @@ in
   inherit (callPackage hpos-config {})
     hpos-config-gen-cli
     hpos-config-into-base36-id
-    hpos-config-into-keystore
     hpos-config-is-valid
     ;
 
@@ -184,10 +183,6 @@ in
   holo-nixpkgs-tests = recurseIntoAttrs (
     import "${holo-nixpkgs.path}/tests" { inherit pkgs; }
   );
-
-  holo-update-conductor-config = callPackage ./holo-update-conductor-config {
-    inherit (rust.packages.nightly) rustPlatform;
-  };
 
   # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
   holochain = callPackage ./holochain {
