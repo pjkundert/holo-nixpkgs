@@ -238,6 +238,11 @@ in
     }
   );
 
+  # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
+  lair-keystore = callPackage ./lair-keystore {
+    inherit (rust.packages.holochain-rsm) rustPlatform;
+  };
+
   libsodium = previous.libsodium.overrideAttrs (
     super: {
       # Separate debug output breaks cross-compilation
