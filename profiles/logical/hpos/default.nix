@@ -135,47 +135,9 @@ in
   services.holochain-conductor = {
     enable = true;
     config = {
-      network = {};
-      logger = {
-        state_dump = false;
-        type = "debug";
-      };
-      persistence_dir = conductorHome;
-      signing_service_uri = "http://localhost:9676";
-      interfaces = [
-        {
-          id = "master-interface";
-          admin = true;
-          driver = {
-            port = 42211;
-            type = "websocket";
-          };
-        }
-        {
-          id = "internal-interface";
-          admin = false;
-          driver = {
-            port = 42222;
-            type = "websocket";
-          };
-        }
-        {
-          id = "admin-interface";
-          admin = false;
-          driver = {
-            port = 42233;
-            type = "websocket";
-          };
-        }
-        {
-          id = "hosted-interface";
-          admin = false;
-          driver = {
-            port = 42244;
-            type = "websocket";
-          };
-        }
-      ];
+      environment_path = "${conductorHome}/databases";
+      use_dangerous_test_keystore = false;
+      # signing_service_uri = "http://localhost:9676";
     };
   };
 
