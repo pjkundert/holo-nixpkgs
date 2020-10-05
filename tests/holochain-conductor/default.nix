@@ -1,4 +1,4 @@
-{ lib, makeTest, holo-cli, hpos, hpos-config-gen-cli, hpos-config-into-keystore, jq }:
+{ lib, makeTest, holo-cli, hpos, hpos-config-gen-cli, jq }:
 
 makeTest {
   name = "holochain-conductor";
@@ -9,7 +9,6 @@ makeTest {
     environment.systemPackages = [
       holo-cli
       hpos-config-gen-cli
-      hpos-config-into-keystore
       jq
     ];
 

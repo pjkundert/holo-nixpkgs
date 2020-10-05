@@ -11,6 +11,6 @@ let
 in
 
 {
-  hpos-admin = callPackage ./hpos-admin {};
-  holochain-conductor = callPackage ./holochain-conductor {};
+  # hpos-admin = callPackage ./hpos-admin {};
+  # holochain-conductor = callPackage ./holochain-conductor {};
 }

@@ -21,56 +21,6 @@ let
   '';
 
   conductorHome = "/var/lib/holochain-conductor";
-
-  dnas = with dnaPackages; [
-    # list self hosted DNAs here
-    # happ-store
-    # holo-hosting-app
-    holofuel
-    # servicelogger
-  ];
-
-  dnaConfig = drv: {
-    id = drv.name;
-    file = "${drv}/${drv.name}.dna.json";
-    hash = pkgs.dnaHash drv;
-    holo-hosted = false;
-  };
-
-   hostedDnas = with dnaPackages; [
-    # list holo hosted DNAs here
-    #{
-    #  drv = hosted-holofuel;
-    #  happ-url = "https://holofuel.holo.host";
-    #  happ-title = "HoloFuel";
-    #  happ-release-version = "v0.1";
-    #  happ-publisher = "Holo Ltd";
-    #  happ-publish-date = "2020/01/31";
-    #}
-  ];
-
-  hostedDnaConfig = dna: rec {
-    id = pkgs.dnaHash dna.drv;
-    file = "${dna.drv}/${dna.drv.name}.dna.json";
-    hash = id;
-    holo-hosted = true;
-    happ-url = dna.happ-url;
-    happ-title = dna.happ-title;
-    happ-release-version = dna.happ-release-version;
-    happ-publisher = dna.happ-publisher;
-    happ-publish-date = dna.happ-publish-date;
-  };
-
-  instanceConfig = drv: {
-    agent = "host-agent";
-    dna = drv.name;
-    id = drv.name;
-    holo-hosted = false;
-    storage = {
-      path = "${conductorHome}/${pkgs.dnaHash drv}";
-      type = "lmdb";
-    };
-  };
 in
 
 {
@@ -86,7 +36,7 @@ in
 
   environment.noXlibs = true;
 
-  environment.systemPackages = [ hpos-reset bump-dna-cli hpos-admin-client hpos-update-cli git ];
+  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli git ];
 
   networking.firewall.allowedTCPPorts = [ 443 ];
 
@@ -185,21 +135,7 @@ in
   services.holochain-conductor = {
     enable = true;
     config = {
-      agents = [
-        {
-          id = "host-agent";
-          name = "Host Agent";
-          keystore_file = "/tmp/holo-keystore";
-          public_address = "$HOLO_KEYSTORE_HCID";
-        }
-      ];
-      bridges = [];
-      dnas = map dnaConfig dnas ++ map hostedDnaConfig hostedDnas;
-      instances = map instanceConfig dnas;
-      network = {
-        type = "sim2h";
-        sim2h_url = "ws://public.sim2h.net:9000";
-      };
+      network = {};
       logger = {
         state_dump = false;
         type = "debug";
@@ -230,7 +166,6 @@ in
             port = 42233;
             type = "websocket";
           };
-          instances = map (drv: { id = drv.name; }) dnas;
         }
         {
           id = "hosted-interface";

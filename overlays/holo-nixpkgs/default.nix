@@ -11,13 +11,6 @@ let
     sha256 = "00d9c6f0hh553hgmw01lp5639kbqqyqsz66jz35pz8xahmyk5wmw";
   };
 
-  bump-dna = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "bump-dna";
-    rev = "f97d963a3cef41b30a646ada9ba55349d104ed2c";
-    sha256 = "1kpa3r8cwik9r3k3l6p1n3cl0g4bqwm0wp23mgr4ac41x7xpndyk";
-  };
-
   cargo-to-nix = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "cargo-to-nix";
@@ -49,8 +42,8 @@ let
   hp-admin = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hp-admin";
-    rev = "5d252ca9b6ea5b7b324381016fce6842618f28f0";
-    sha256 = "18xdf5dpr1lv2kpbp5xlrpv7h4mns9gvpyj5m49fx5xl6vm3bgx9";
+    rev = "e8cad8561580e028d917685539f44d53025c4ea5";
+    sha256 = "0mvhlgp6nlv069wvbc5nbd8229i3fjzyk0qszlmkv9hp0jyph51y";
   };
 
   hp-admin-crypto = fetchFromGitHub {
@@ -86,8 +79,6 @@ in
     aorura-emu
     ;
 
-  inherit (callPackage bump-dna {}) bump-dna-cli;
-
   inherit (callPackage cargo-to-nix {})
     buildRustPackage
     cargoToNix
@@ -109,19 +100,12 @@ in
   inherit (callPackage hpos-config {})
     hpos-config-gen-cli
     hpos-config-into-base36-id
-    hpos-config-into-keystore
     hpos-config-is-valid
     ;
 
   inherit (callPackage npm-to-nix {}) npmToNix;
 
   inherit (callPackage "${nixpkgs-mozilla}/package-set.nix" {}) rustChannelOf;
-
-  buildDNA = makeOverridable (
-    callPackage ./build-dna {
-      inherit (rust.packages.nightly) rustPlatform;
-    }
-  );
 
   buildImage = imports:
     let
@@ -169,19 +153,6 @@ in
     ${remarshal}/bin/json2toml < ${writeJSON config} > $out
   '';
 
-  dnaHash = dna: builtins.readFile (
-    runCommand "${dna.name}-hash" {} ''
-      ${holochain-rust}/bin/hc hash -p ${dna}/${dna.name}.dna.json \
-        | tail -1 \
-        | cut -d ' ' -f 3- \
-        | tr -d '\n' > $out
-    ''
-  );
-
-  dnaPackages = recurseIntoAttrs (
-    import ./dna-packages final previous
-  );
-
   holo = recurseIntoAttrs {
     buildProfile = profile: buildImage [
       "${holo-nixpkgs.path}/profiles/logical/holo/${profile}"
@@ -191,7 +162,6 @@ in
     hydra-master = holo.buildProfile "hydra/master";
     hydra-minion = holo.buildProfile "hydra/minion";
     router-gateway = holo.buildProfile "router-gateway";
-    sim2h = holo.buildProfile "sim2h";
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
   
@@ -205,17 +175,10 @@ in
     import "${holo-nixpkgs.path}/tests" { inherit pkgs; }
   );
 
-  holo-update-conductor-config = callPackage ./holo-update-conductor-config {
-    inherit (rust.packages.nightly) rustPlatform;
-  };
-
-  holochain-cli = holochain-rust;
-
-  holochain-conductor = holochain-rust;
-
-  holochain-rust = callPackage ./holochain-rust {
+  # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
+  holochain = callPackage ./holochain {
     inherit (darwin.apple_sdk.frameworks) CoreServices Security;
-    inherit (rust.packages.nightly) rustPlatform;
+    inherit (rust.packages.holochain-rsm) rustPlatform;
   };
 
   holoport-nano-dtb = callPackage ./holoport-nano-dtb {
@@ -275,6 +238,11 @@ in
     }
   );
 
+  # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
+  lair-keystore = callPackage ./lair-keystore {
+    inherit (rust.packages.holochain-rsm) rustPlatform;
+  };
+
   libsodium = previous.libsodium.overrideAttrs (
     super: {
       # Separate debug output breaks cross-compilation
@@ -321,14 +289,31 @@ in
           ];
         };
       };
+      holochain-rsm = {
+        rustPlatform = final.makeRustPlatform {
+          inherit (buildPackages.rust.packages.holochain-rsm) cargo rustc;
+        };
+
+        cargo = final.rust.packages.holochain-rsm.rustc;
+        rustc = (
+          rustChannelOf {
+            channel = "stable";
+            date = "2020-08-03";
+            sha256 = "0yvh2ck2vqas164yh01ggj4ckznx04blz3jgbkickfgjm18y269j";
+          }
+        ).rust.override {
+          targets = [
+            "aarch64-unknown-linux-musl"
+            "wasm32-unknown-unknown"
+            "x86_64-pc-windows-gnu"
+            "x86_64-unknown-linux-musl"
+          ];
+        };
+      };
     };
   };
 
   wrangler = callPackage ./wrangler {};
-
-  wrapDNA = drv: runCommand (lib.removeSuffix ".dna.json" drv.name) {} ''
-    install -Dm -x ${drv} $out/${drv.name}
-  '';
 
   zerotierone = previous.zerotierone.overrideAttrs (
     super: {
