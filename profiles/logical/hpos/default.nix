@@ -60,6 +60,8 @@ in
 
   services.hpos-init.enable = lib.mkDefault true;
 
+  services.lair-keystore.enable = true;
+
   services.mingetty.autologinUser = "root";
 
   services.nginx = {

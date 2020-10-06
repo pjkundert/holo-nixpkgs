@@ -20,6 +20,7 @@
     ./services/hpos-admin.nix
     ./services/hpos-init.nix
     ./services/hpos-led-manager.nix
+    ./services/lair-keystore.nix
     ./services/magic-wormhole-mailbox-server.nix
     ./system/holo-nixpkgs/auto-upgrade.nix
     ./system/holo-nixpkgs/usb-reset.nix
