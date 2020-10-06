@@ -3,7 +3,7 @@
 with pkgs;
 
 let
-  workingDirectory = "/var/lib/holochain-conductor";
+  holochainWorkingDir = "/var/lib/holochain-rsm";
 in
 
 {
@@ -21,11 +21,11 @@ in
 
   system.holo-nixpkgs.usbReset.enable = false;
 
-  services.holochain-conductor = {
+  services.holochain = {
     enable = true;
-    working-directory = workingDirectory;
+    working-directory = holochainWorkingDir;
     config = {
-      environment_path = "${workingDirectory}/databases";
+      environment_path = "${holochainWorkingDir}/databases";
       use_dangerous_test_keystore = false;
       # signing_service_uri = "http://localhost:9676";
     };

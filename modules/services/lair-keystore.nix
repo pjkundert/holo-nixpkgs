@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.lair-keystore;
-  holochain-home = config.services.holochain-conductor.working-directory;
+  holochain-home = config.services.holochain.working-directory;
 in
 
 {
@@ -21,15 +21,15 @@ in
     environment.systemPackages = [ cfg.package ];
 
     systemd.services.lair-keystore = {
-      after = [ "network.target" "holochain-conductor.service" ];
-      requires = [ "holochain-conductor.service" ];
+      after = [ "network.target" "holochain.service" ];
+      requires = [ "holochain.service" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        User = "holochain-conductor";
-        Group = "holochain-conductor";
+        User = "holochain-rsm";
+        Group = "holochain-rsm";
         ExecStart = "${cfg.package}/bin/lair-keystore -d ${holochain-home}/lair-keystore";
-        StateDirectory = "holochain-conductor";
+        StateDirectory = "holochain-rsm";
       };
     };
 

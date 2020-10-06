@@ -3,11 +3,11 @@
 with lib;
 
 let
-  cfg = config.services.holochain-conductor;
+  cfg = config.services.holochain;
 in
 
 {
-  options.services.holochain-conductor = {
+  options.services.holochain = {
     enable = mkEnableOption "Holochain";
 
     config = mkOption {
@@ -27,7 +27,7 @@ in
   config = mkIf (cfg.enable) {
     environment.systemPackages = [ cfg.package ];
 
-    systemd.services.holochain-conductor = {
+    systemd.services.holochain = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
@@ -38,20 +38,20 @@ in
       '';
 
       serviceConfig = {
-        User = "holochain-conductor";
-        Group = "holochain-conductor";
+        User = "holochain-rsm";
+        Group = "holochain-rsm";
         ExecStart = "${cfg.package}/bin/holochain -c ${cfg.working-directory}/conductor-config.toml";
-        StateDirectory = "holochain-conductor";
+        StateDirectory = "holochain-rsm";
       };
     };
 
-    users.users.holochain-conductor = {
+    users.users.holochain-rsm = {
       isSystemUser = true;
       home = "${cfg.working-directory}";
       # ensures directory is owned by user
       createHome = true;
     };
 
-    users.groups.holochain-conductor = {};
+    users.groups.holochain-rsm = {};
   };
 }

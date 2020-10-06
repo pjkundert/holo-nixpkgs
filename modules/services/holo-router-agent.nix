@@ -4,7 +4,7 @@ with lib;
 
 let
   cfg = config.services.holo-router-agent;
-  holochain-home = config.services.holochain-conductor.working-directory;
+  holochain-home = config.services.holochain.working-directory;
 in
 
 {
