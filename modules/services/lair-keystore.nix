@@ -28,7 +28,7 @@ in
       serviceConfig = {
         User = "holochain-conductor";
         Group = "holochain-conductor";
-        ExecStart = "${cfg.package}/bin/lair-keystore -d ${cfg.working-directory}";
+        ExecStart = "${cfg.package}/bin/lair-keystore -d ${holochain-home}";
         StateDirectory = "holochain-conductor";
       };
     };
