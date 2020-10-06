@@ -20,7 +20,7 @@ let
       -v
   '';
 
-  conductorHome = "/var/lib/holochain-conductor";
+  workingDirectory = "/var/lib/holochain-conductor";
 in
 
 {
@@ -134,8 +134,9 @@ in
 
   services.holochain-conductor = {
     enable = true;
+    working-directory = workingDirectory;
     config = {
-      environment_path = "${conductorHome}/databases";
+      environment_path = "${workingDirectory}/databases";
       use_dangerous_test_keystore = false;
       # signing_service_uri = "http://localhost:9676";
     };

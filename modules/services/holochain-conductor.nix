@@ -18,6 +18,10 @@ in
       default = pkgs.holochain;
       type = types.package;
     };
+
+    working-directory = mkOption {
+      default = "";
+    };
   };
 
   config = mkIf (cfg.enable) {
@@ -36,14 +40,14 @@ in
       serviceConfig = {
         User = "holochain-conductor";
         Group = "holochain-conductor";
-        ExecStart = "${cfg.package}/bin/holochain -c /var/lib/holochain-conductor/conductor-config.toml";
+        ExecStart = "${cfg.package}/bin/holochain -c ${cfg.working-directory}/conductor-config.toml";
         StateDirectory = "holochain-conductor";
       };
     };
 
     users.users.holochain-conductor = {
       isSystemUser = true;
-      home = "/var/lib/holochain-conductor";
+      home = "${cfg.working-directory}";
       # ensures directory is owned by user
       createHome = true;
     };
