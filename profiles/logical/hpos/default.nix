@@ -175,16 +175,6 @@ in
           proxyPass = "http://127.0.0.1:4656";
           proxyWebsockets = true;
         };
-
-        "/hc/master/" = {
-          proxyPass = "http://127.0.0.1:42211/";
-          proxyWebsockets = true;
-        };
-
-        "/hc/admin/" = {
-          proxyPass = "http://127.0.0.1:42233/";
-          proxyWebsockets = true;
-        };
       };
     };
 
