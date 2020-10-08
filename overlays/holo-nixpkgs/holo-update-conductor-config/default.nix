@@ -5,10 +5,10 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "holo-update-conductor-config";
-    rev = "0125704cb6fc227e82994b0627b677c1cd4c49e1";
-    sha256 = "1820hrly2mwp4vqk1ik7j0zx2rqx3skbjniy60lclr1niamz0rvq";
+    rev = "47c1b20013086064fdd9c7785885fefee3d009f6";
+    sha256 = "08yijh7gr8mrvf3da76q9rzwqgmql8zx40cha1mnf7csj6m3g40x";
   };
-  cargoSha256 = "0djkhjy32kpmxm6gyq39a8jjqs272fw4pn1dnsajh7wnm9rnnzn0";
+  cargoSha256 = "18zvspz31lsxfk2627a3zvh83sw7j1sak1glw6bblraljg4s15l3";
 
   meta.platforms = lib.platforms.linux;
   doCheck = false;
