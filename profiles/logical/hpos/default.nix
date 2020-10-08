@@ -139,6 +139,7 @@ in
     working-directory = holochainWorkingDir;
     config = {
       environment_path = "${holochainWorkingDir}/databases";
+      keystore_path = "${holochainWorkingDir}/lair-keystore";
       use_dangerous_test_keystore = false;
       # signing_service_uri = "http://localhost:9676";
     };
