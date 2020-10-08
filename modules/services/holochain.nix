@@ -28,7 +28,8 @@ in
     environment.systemPackages = [ cfg.package ];
 
     systemd.services.holochain = {
-      after = [ "network.target" ];
+      after = [ "network.target" "lair-keystore.service" ];
+      requires = [ "lair-keystore.service" ];
       wantedBy = [ "multi-user.target" ];
 
       preStart = ''
