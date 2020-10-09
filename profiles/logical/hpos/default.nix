@@ -20,7 +20,7 @@ let
       -v
   '';
 
-  conductorHome = "/var/lib/holochain-conductor";
+  holochainWorkingDir = "/var/lib/holochain-rsm";
 in
 
 {
@@ -59,6 +59,8 @@ in
   services.hpos-admin.enable = true;
 
   services.hpos-init.enable = lib.mkDefault true;
+
+  services.lair-keystore.enable = true;
 
   services.mingetty.autologinUser = "root";
 
@@ -132,50 +134,14 @@ in
     '';
   };
 
-  services.holochain-conductor = {
+  services.holochain = {
     enable = true;
+    working-directory = holochainWorkingDir;
     config = {
-      network = {};
-      logger = {
-        state_dump = false;
-        type = "debug";
-      };
-      persistence_dir = conductorHome;
-      signing_service_uri = "http://localhost:9676";
-      interfaces = [
-        {
-          id = "master-interface";
-          admin = true;
-          driver = {
-            port = 42211;
-            type = "websocket";
-          };
-        }
-        {
-          id = "internal-interface";
-          admin = false;
-          driver = {
-            port = 42222;
-            type = "websocket";
-          };
-        }
-        {
-          id = "admin-interface";
-          admin = false;
-          driver = {
-            port = 42233;
-            type = "websocket";
-          };
-        }
-        {
-          id = "hosted-interface";
-          admin = false;
-          driver = {
-            port = 42244;
-            type = "websocket";
-          };
-        }
-      ];
+      environment_path = "${holochainWorkingDir}/databases";
+      keystore_path = "${holochainWorkingDir}/lair-keystore";
+      use_dangerous_test_keystore = false;
+      # signing_service_uri = "http://localhost:9676";
     };
   };
 

@@ -25,6 +25,7 @@ in
     systemd.services.hpos-admin-socket-setup.script = ''
       chgrp hpos-admin-users /run/hpos-admin.sock
       chmod g+w /run/hpos-admin.sock
+      rm -rf /var/lib/holochain-conductor
     '';
 
     systemd.services.hpos-admin = {
