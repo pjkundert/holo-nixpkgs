@@ -141,6 +141,14 @@ in
       environment_path = "${holochainWorkingDir}/databases";
       keystore_path = "${holochainWorkingDir}/lair-keystore";
       use_dangerous_test_keystore = false;
+      admin_interfaces = [
+        {
+          driver = {
+            type = "websocket";
+            port = 4444;
+          };
+        }
+      ];
       # signing_service_uri = "http://localhost:9676";
     };
   };
