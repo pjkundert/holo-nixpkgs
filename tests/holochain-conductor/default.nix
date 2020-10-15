@@ -35,7 +35,7 @@ makeTest {
     assert actual_dnas == expected_dnas, "unexpected dnas"
 
     machine.shutdown()
-  ''
+  '';
 
   meta.platforms = [ "x86_64-linux" ];
 }
