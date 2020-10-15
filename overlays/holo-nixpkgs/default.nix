@@ -262,13 +262,13 @@ in
   inherit (callPackage ./hpos-update {}) hpos-update-cli;
 
   hydra = let
-    previousHydra = previous.hydra-migration;
-  in previousHydra.overrideAttrs (
+    hydraUnpatched = previous.hydra-unstable;
+  in hydraUnpatched.overrideAttrs (
     super: {
       doCheck = false;
       patches = [
-        ./hydra/fix-declarative-jobsets-type.patch
-        ./hydra/fix-eval-jobs-build.patch
+        # upstreamed: ./hydra/fix-declarative-jobsets-type.patch
+        # upstreamed: ./hydra/fix-eval-jobs-build.patch
         ./hydra/logo-vertical-align.diff
         ./hydra/no-restrict-eval.diff
         ./hydra/secure-github.diff
