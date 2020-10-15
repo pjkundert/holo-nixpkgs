@@ -42,7 +42,9 @@ in
   nix.distributedBuilds = true;
 
   nix.extraOptions = ''
+    allowed-uris = https://github.com
     builders-use-substitutes = true
+    restrict-eval = false
   '';
   
   security.acme = {
@@ -50,7 +52,7 @@ in
     # REVIEW: maybe a dedicated email for Hydra?
     email = "oleksii.filonenko@holo.host";
   };
-  
+
   services.postgresql.extraConfig = ''
     max_connections = 1024
   '';
