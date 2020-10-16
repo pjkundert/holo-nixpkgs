@@ -36,6 +36,7 @@ in
         if [[ ! -f $STATE_DIRECTORY/holochain-config.toml ]]; then
           ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeTOML cfg.config} > $STATE_DIRECTORY/holochain-config.toml
         fi
+        sleep .1 # wait for keystore socket to be ready
       '';
 
       serviceConfig = {
