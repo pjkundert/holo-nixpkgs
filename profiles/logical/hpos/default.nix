@@ -23,26 +23,52 @@ let
   conductorHome = "/var/lib/holochain-conductor";
 
   dnas = with dnaPackages; [
-    happ-store
-    holo-hosting-app
-    holo-communities-dna
+    # list self hosted DNAs here
+    # happ-store
+    # holo-hosting-app
     holofuel
-    servicelogger
+    # servicelogger
   ];
 
   dnaConfig = drv: {
     id = drv.name;
     file = "${drv}/${drv.name}.dna.json";
     hash = pkgs.dnaHash drv;
+    holo-hosted = false;
+  };
+
+   hostedDnas = with dnaPackages; [
+    # list holo hosted DNAs here
+    #{
+    #  drv = hosted-holofuel;
+    #  happ-url = "https://holofuel.holo.host";
+    #  happ-title = "HoloFuel";
+    #  happ-release-version = "v0.1";
+    #  happ-publisher = "Holo Ltd";
+    #  happ-publish-date = "2020/01/31";
+    #}
+  ];
+
+  hostedDnaConfig = dna: rec {
+    id = pkgs.dnaHash dna.drv;
+    file = "${dna.drv}/${dna.drv.name}.dna.json";
+    hash = id;
+    holo-hosted = true;
+    happ-url = dna.happ-url;
+    happ-title = dna.happ-title;
+    happ-release-version = dna.happ-release-version;
+    happ-publisher = dna.happ-publisher;
+    happ-publish-date = dna.happ-publish-date;
   };
 
   instanceConfig = drv: {
     agent = "host-agent";
     dna = drv.name;
     id = drv.name;
+    holo-hosted = false;
     storage = {
-      path = "${conductorHome}/${drv.name}";
-      type = "file";
+      path = "${conductorHome}/${pkgs.dnaHash drv}";
+      type = "lmdb";
     };
   };
 in
@@ -60,7 +86,7 @@ in
 
   environment.noXlibs = true;
 
-  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli ];
+  environment.systemPackages = [ hpos-reset bump-dna-cli hpos-admin-client hpos-update-cli git ];
 
   networking.firewall.allowedTCPPorts = [ 443 ];
 
@@ -73,15 +99,6 @@ in
   };
 
   security.sudo.wheelNeedsPassword = false;
-
-  services.avahi = {
-    enable = true;
-
-    publish = {
-      enable = true;
-      addresses = true;
-    };
-  };
 
   services.holo-auth-client.enable = lib.mkDefault true;
 
@@ -109,6 +126,20 @@ in
           '';
         };
 
+        "~ ^/admin(?:/.*)?$" = {
+            extraConfig = ''
+              rewrite ^/admin.*$ / last;
+              return 404;
+            '';
+        };
+
+        "~ ^/holofuel(?:/.*)?$" = {
+            extraConfig = ''
+              rewrite ^/holofuel.*$ / last;
+              return 404;
+            '';
+        };
+
         "/api/v1/" = {
           proxyPass = "http://unix:/run/hpos-admin.sock:/";
           extraConfig = ''
@@ -117,24 +148,34 @@ in
         };
 
         "/api/v1/ws/" = {
-          proxyPass = "http://localhost:42233";
+          proxyPass = "http://127.0.0.1:42233";
           proxyWebsockets = true;
-        };
-
-        "/auth/" = {
-          proxyPass = "http://localhost:2884";
           extraConfig = ''
-            internal;
-            proxy_set_header X-Original-URI $request_uri;
+            auth_request /auth/;
           '';
         };
 
-        "/v1/hosting/" = {
+        "/auth/" = {
+          proxyPass = "http://127.0.0.1:2883";
+          extraConfig = ''
+            internal;
+            proxy_set_header X-Original-URI $request_uri;
+            proxy_set_header X-Original-Method $request_method;
+            proxy_pass_request_body off;
+            proxy_set_header Content-Length "";
+          '';
+        };
+
+        "/hosting/" = {
           proxyPass = "http://127.0.0.1:4656";
           proxyWebsockets = true;
         };
       };
     };
+
+    virtualHosts.localhost = {
+        locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+      };
 
     appendHttpConfig = ''
       limit_req_zone $binary_remote_addr zone=zone1:1m rate=2r/s;
@@ -153,11 +194,15 @@ in
         }
       ];
       bridges = [];
-      dnas = map dnaConfig dnas;
+      dnas = map dnaConfig dnas ++ map hostedDnaConfig hostedDnas;
       instances = map instanceConfig dnas;
       network = {
         type = "sim2h";
         sim2h_url = "ws://public.sim2h.net:9000";
+      };
+      logger = {
+        state_dump = false;
+        type = "debug";
       };
       persistence_dir = conductorHome;
       signing_service_uri = "http://localhost:9676";
@@ -213,6 +258,8 @@ in
     lib.mkForce "${holo-router-acme}/bin/holo-router-acme";
 
   system.stateVersion = "19.09";
+
+  users.users.nginx.extraGroups = [ "hpos-admin-users" ];
 
   users.users.holo.isNormalUser = true;
 

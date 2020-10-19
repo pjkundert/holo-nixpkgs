@@ -11,8 +11,15 @@ let
     sha256 = "00d9c6f0hh553hgmw01lp5639kbqqyqsz66jz35pz8xahmyk5wmw";
   };
 
+  bump-dna = fetchFromGitHub {
+    owner = "Holo-Host";
+    repo = "bump-dna";
+    rev = "f97d963a3cef41b30a646ada9ba55349d104ed2c";
+    sha256 = "1kpa3r8cwik9r3k3l6p1n3cl0g4bqwm0wp23mgr4ac41x7xpndyk";
+  };
+
   cargo-to-nix = fetchFromGitHub {
-    owner = "transumption-unstable";
+    owner = "Holo-Host";
     repo = "cargo-to-nix";
     rev = "ba6adc0a075dfac2234e851b0d4c2511399f2ef0";
     sha256 = "1rcwpaj64fwz1mwvh9ir04a30ssg35ni41ijv9bq942pskagf1gl";
@@ -42,22 +49,22 @@ let
   hp-admin = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hp-admin";
-    rev = "ac8d51c008ecb1725cce856c3ac9cf54bed6fac9";
-    sha256 = "03idygs6z3zslmf8zx1dmm6flvn5w4x7arpjq596fw9p67xck9n6";
+    rev = "5d252ca9b6ea5b7b324381016fce6842618f28f0";
+    sha256 = "18xdf5dpr1lv2kpbp5xlrpv7h4mns9gvpyj5m49fx5xl6vm3bgx9";
   };
 
   hp-admin-crypto = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hp-admin-crypto";
-    rev = "690e3dbc7a49ecd31ab622b576001d93ce3de1ae";
-    sha256 = "01ji3ybx46gyi5y99vrf72yman3azjwkdzhf79rsa81bsy2jb664";
+    rev = "321833b8711d4141de419fa3d1610165621569a5";
+    sha256 = "0pssizqpmyxjwzqgkrd3vdg3r30cvz4zwb23zf895rm7djhq52sn";
   };
 
   hpos-config = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hpos-config";
-    rev = "eb256e2243e08546b078c106541671fb4d4aa61d";
-    sha256 = "0ldbvrda016aha0p55k1nzqb6636micc0x7xf2ffkqn96fz6d6ly";
+    rev = "920bd38401edf0b5e81da489d5e519852d7b3218";
+    sha256 = "1sc4jhn4h0phxi1pn20c5wq7x8zs3d8dis9il7fdc5iiszki5413";
   };
 
   nixpkgs-mozilla = fetchTarball {
@@ -66,7 +73,7 @@ let
   };
 
   npm-to-nix = fetchFromGitHub {
-    owner = "transumption-unstable";
+    owner = "Holo-Host";
     repo = "npm-to-nix";
     rev = "6d2cbbc9d58566513019ae176bab7c2aeb68efae";
     sha256 = "1wm9f2j8zckqbp1w7rqnbvr8wh6n072vyyzk69sa6756y24sni9a";
@@ -78,6 +85,8 @@ in
     aorura-cli
     aorura-emu
     ;
+
+  inherit (callPackage bump-dna {}) bump-dna-cli;
 
   inherit (callPackage cargo-to-nix {})
     buildRustPackage
@@ -101,6 +110,7 @@ in
     hpos-config-gen-cli
     hpos-config-into-base36-id
     hpos-config-into-keystore
+    hpos-config-is-valid
     ;
 
   inherit (callPackage npm-to-nix {}) npmToNix;
@@ -184,6 +194,8 @@ in
     sim2h = holo.buildProfile "sim2h";
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
+  
+  extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
 
   holo-cli = callPackage ./holo-cli {};
 
@@ -192,6 +204,10 @@ in
   holo-nixpkgs-tests = recurseIntoAttrs (
     import "${holo-nixpkgs.path}/tests" { inherit pkgs; }
   );
+
+  holo-update-conductor-config = callPackage ./holo-update-conductor-config {
+    inherit (rust.packages.nightly) rustPlatform;
+  };
 
   holochain-cli = holochain-rust;
 
@@ -224,7 +240,7 @@ in
 
   hpos-admin = callPackage ./hpos-admin {
     stdenv = stdenvNoCC;
-    python3 = python3.withPackages (ps: [ ps.flask ps.gevent ]);
+    python3 = python3.withPackages (ps: with ps; [ http-parser flask gevent toml requests websockets ]);
   };
 
   hpos-admin-client = callPackage ./hpos-admin-client {
@@ -239,7 +255,7 @@ in
   };
 
   hpos-reset = writeShellScriptBin "hpos-reset" ''
-    rm -rf /var 
+    rm -rf /var
     reboot
   '';
 
@@ -273,6 +289,12 @@ in
   );
 
   magic-wormhole-mailbox-server = python3Packages.callPackage ./magic-wormhole-mailbox-server {};
+
+  nginx = nginxStable;
+
+  nginxStable = (callPackage "${pkgs.path}/pkgs/servers/http/nginx/stable.nix" {}).overrideAttrs (super: {
+    patches = super.patches ++ [ ./nginx/add-wasm-mime-type.patch ];
+  });
 
   nodejs = nodejs-12_x;
 
