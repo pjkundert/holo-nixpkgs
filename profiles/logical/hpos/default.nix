@@ -78,6 +78,13 @@ in
           '';
         };
 
+        "/apps/" = {
+          alias = "/var/lib/self-hosted-happs/uis/";
+          extraConfig = ''
+            limit_req zone=zone1 burst=30;
+          '';
+        };
+
         "~ ^/admin(?:/.*)?$" = {
             extraConfig = ''
               rewrite ^/admin.*$ / last;
