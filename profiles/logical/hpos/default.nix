@@ -21,6 +21,8 @@ let
   '';
 
   holochainWorkingDir = "/var/lib/holochain-rsm";
+
+  selfHostedHappsWorkingDir = "/var/lib/self-hosted-happs";
 in
 
 {
@@ -153,8 +155,19 @@ in
           };
         }
       ];
-      # signing_service_uri = "http://localhost:9676";
     };
+  };
+
+  services.self-hosted-happs = {
+    enable = true;
+    working-directory = selfHostedHappsWorkingDir;
+    default-list = [
+      {
+        app_id = "elemental-chat";
+        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
+      }
+    ];
   };
 
   system.holo-nixpkgs.autoUpgrade = {
