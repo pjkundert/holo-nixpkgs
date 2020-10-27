@@ -40,7 +40,7 @@ in
       serviceConfig = {
         User = "self-hosted-happs";
         Group = "self-hosted-happs";
-        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js ${cfg.working-directory}/config.yaml";
+        ExecStart = "${pkgs.nodejs}/bin/node --no-warnings ${cfg.package}/main.js ${cfg.working-directory}/config.yaml";
         StateDirectory = "self-hosted-happs";
         Type = "oneshot";
       };
