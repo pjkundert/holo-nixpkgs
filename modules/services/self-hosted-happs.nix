@@ -11,7 +11,7 @@ in
     enable = mkEnableOption "self-hosted-happs";
 
     default-list = mkOption {
-      type = types.attrs;
+      type = types.listOf types.attrs;
     };
 
     package = mkOption {
@@ -33,7 +33,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       preStart = ''
-        # write config.yaml here
+        ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeJSON cfg.default-list} > ${cfg.working-directory}/config.yaml
         sleep .1 # wait for holochian admin interface to be ready
       '';
 

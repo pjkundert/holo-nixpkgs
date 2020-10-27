@@ -10,9 +10,7 @@
       sha256 = "14xsj49jmcdxvfb02wfd57fy5awbx6fiza8hcj2ic49l7wqpz10a";
     };
 
-
-
-    buildInputs = [nodejs];
+    buildInputs = [ nodejs ];
 
     preConfigure = ''
       cp -r ${npmToNix { src = "${src}/"; }} node_modules
