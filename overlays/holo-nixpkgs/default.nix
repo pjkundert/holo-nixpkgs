@@ -313,6 +313,8 @@ in
     };
   };
 
+  inherit (callPackage ./self-hosted-happs {}) self-hosted-happs-node;
+
   wrangler = callPackage ./wrangler {};
 
   zerotierone = previous.zerotierone.overrideAttrs (

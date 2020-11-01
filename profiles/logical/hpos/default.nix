@@ -21,6 +21,8 @@ let
   '';
 
   holochainWorkingDir = "/var/lib/holochain-rsm";
+
+  selfHostedHappsWorkingDir = "/var/lib/self-hosted-happs";
 in
 
 {
@@ -78,6 +80,13 @@ in
           '';
         };
 
+        "/apps/" = {
+          alias = "/var/lib/self-hosted-happs/uis/";
+          extraConfig = ''
+            limit_req zone=zone1 burst=30;
+          '';
+        };
+
         "~ ^/admin(?:/.*)?$" = {
             extraConfig = ''
               rewrite ^/admin.*$ / last;
@@ -102,9 +111,6 @@ in
         "/api/v1/ws/" = {
           proxyPass = "http://127.0.0.1:42233";
           proxyWebsockets = true;
-          extraConfig = ''
-            auth_request /auth/;
-          '';
         };
 
         "/auth/" = {
@@ -141,8 +147,27 @@ in
       environment_path = "${holochainWorkingDir}/databases";
       keystore_path = "${holochainWorkingDir}/lair-keystore";
       use_dangerous_test_keystore = false;
-      # signing_service_uri = "http://localhost:9676";
+      admin_interfaces = [
+        {
+          driver = {
+            type = "websocket";
+            port = 4444;
+          };
+        }
+      ];
     };
+  };
+
+  services.self-hosted-happs = {
+    enable = true;
+    working-directory = selfHostedHappsWorkingDir;
+    default-list = [
+      {
+        app_id = "elemental-chat";
+        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
+      }
+    ];
   };
 
   system.holo-nixpkgs.autoUpgrade = {
