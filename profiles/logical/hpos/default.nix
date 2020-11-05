@@ -169,6 +169,11 @@ in
         ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
         dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
       }
+      {
+        app_id = "elemental-chat-2";
+        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
+      }
     ];
   };
 
