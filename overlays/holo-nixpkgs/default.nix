@@ -259,7 +259,7 @@ in
     reboot
   '';
 
-  inherit (callPackage ./hpos-update {}) hpos-update-cli;
+  # inherit (callPackage ./hpos-update {}) hpos-update-cli;
 
   hydra = let
     hydraUnpatched = previous.hydra-unstable;
