@@ -1,8 +1,6 @@
 { stdenv
 , rustPlatform
 , fetchFromGitHub
-, dnaPackages
-, holochain-rust
 , makeWrapper
 , nodejs
 , npmToNix
@@ -20,16 +18,7 @@ stdenv.mkDerivation rec {
     sha256 = "0yii2qkc6bcxwjwlvv7nj1awgqbd8a2bxx1gif0fx3jd2r142008";
   };
 
-  buildInputs = [
-    holochain-rust
-    python
-  ] ++ (with dnaPackages; [
-    happ-store
-    holo-hosting-app
-    hosted-holofuel
-    # holofuel
-    servicelogger
-  ]);
+  buildInputs = [ python ];
 
   nativeBuildInputs = [
     makeWrapper
