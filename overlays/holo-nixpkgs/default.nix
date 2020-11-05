@@ -191,7 +191,7 @@ in
     linux = linux_latest;
   };
 
-
+  inherit (callPackage ./host-console-ui {}) host-console-ui;
 
   hpos = recurseIntoAttrs {
     buildImage = imports:
