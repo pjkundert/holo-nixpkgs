@@ -73,7 +73,9 @@ let
   };
 in
 
-{
+{ 
+  yarn2nix = yarn2nix-moretea;
+ 
   inherit (callPackage aorura {})
     aorura-cli
     aorura-emu
@@ -188,6 +190,8 @@ in
   holoport-nano-dtb = callPackage ./holoport-nano-dtb {
     linux = linux_latest;
   };
+
+  inherit (callPackage ./host-console-ui {}) host-console-ui;
 
   hpos = recurseIntoAttrs {
     buildImage = imports:
