@@ -20,7 +20,7 @@ in
     };
 
     working-directory = mkOption {
-      default = "";
+      type = types.path;
     };
   };
 

@@ -17,6 +17,7 @@
     ./services/holochain.nix
     ./services/hp-admin-crypto-server.nix
     ./services/hpos-admin.nix
+    ./services/holo-envoy.nix
     ./services/hpos-init.nix
     ./services/hpos-led-manager.nix
     ./services/lair-keystore.nix

@@ -39,6 +39,8 @@ let
 in
 
 {
+  yarn2nix = yarn2nix-moretea;
+
   inherit (callPackage ./aorura {}) aorura;
 
   inherit (callPackage cargo-to-nix {})
@@ -124,6 +126,10 @@ in
 
   holo-cli = callPackage ./holo-cli {};
 
+  holo-envoy = callPackage ./holo-envoy {
+    inherit (rust.packages.nightly) rustPlatform;
+  };
+
   holo-nixpkgs.path = gitignoreSource ../..;
 
   holo-nixpkgs-tests = recurseIntoAttrs (
@@ -139,6 +145,8 @@ in
   holoport-nano-dtb = callPackage ./holoport-nano-dtb {
     linux = linux_latest;
   };
+
+  inherit (callPackage ./host-console-ui {}) host-console-ui;
 
   hpos = recurseIntoAttrs {
     buildImage = imports:
