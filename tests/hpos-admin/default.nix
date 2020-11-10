@@ -10,7 +10,7 @@ makeTest {
 
     environment.systemPackages = [
       hpos-admin-client
-      hpos-config-gen-cli
+      hpos-config-gen-cli  # TODO: now inside hpos-config package
       jq
     ];
 
