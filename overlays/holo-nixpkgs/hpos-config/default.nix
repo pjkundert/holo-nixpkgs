@@ -18,7 +18,7 @@ in
         sha256 = "1sc4jhn4h0phxi1pn20c5wq7x8zs3d8dis9il7fdc5iiszki5413";
     };
 
-    cargoSha256 = "0nahfwqh64r6pwl4acayznpld4zcwqdk3g7ys54vfv3gc4033nbg";
+    cargoSha256 = "19fk595k9nrqgn5nwfxd0mnzw3is448q2lpgc8m20d92sw2az8fx";
 
     nativeBuildInputs = [ perl ];
 
