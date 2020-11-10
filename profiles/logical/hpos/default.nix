@@ -36,7 +36,8 @@ in
   boot.loader.grub.splashImage = ./splash.png;
   boot.loader.timeout = 1;
 
-  environment.noXlibs = true;
+  # REVIEW: `true` breaks gtk+ builds (cairo dependency)
+  environment.noXlibs = false;
 
   environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli git ];
 
