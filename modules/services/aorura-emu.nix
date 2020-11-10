@@ -7,7 +7,7 @@ let
 in
 
 {
-  options.services.aorura = {
+  options.services.aorura-emu = {
     enable = mkEnableOption "AORURA Emulator";
 
     package = mkOption {
