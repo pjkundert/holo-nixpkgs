@@ -56,11 +56,7 @@ in
 
   inherit (callPackage ./hp-admin-crypto {}) hp-admin-crypto;
 
-  inherit (callPackage ./hpos-config {})
-    hpos-config-gen-cli
-    hpos-config-into-base36-id
-    hpos-config-is-valid
-    ;
+  inherit (callPackage ./hpos-config {}) hpos-config;
 
   inherit (callPackage npm-to-nix {}) npmToNix;
 

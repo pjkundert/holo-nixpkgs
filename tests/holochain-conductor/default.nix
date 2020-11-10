@@ -8,7 +8,7 @@ makeTest {
 
     environment.systemPackages = [
       holo-cli
-      hpos-config-gen-cli
+      hpos-config-gen-cli # TODO: now inside hpos-config package
       jq
     ];
 
