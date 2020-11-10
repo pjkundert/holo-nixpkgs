@@ -14,7 +14,7 @@ let
 in
 
 {
-  hpos-config-gen-cli = buildRustPackage rustPlatform {
+  hpos-config-gen-cli = rustPlatform.buildRustPackage {
     name = "hpos-config-gen-cli";
     inherit src;
     cargoDir = "gen-cli";
@@ -24,7 +24,7 @@ in
     doCheck = false;
   };
 
-  hpos-config-gen-web = buildRustPackage rustPlatform rec {
+  hpos-config-gen-web = rustPlatform.buildRustPackage rec {
     name = "hpos-config-gen-web";
     inherit src;
     cargoDir = "gen-web";
@@ -52,7 +52,7 @@ in
     doCheck = false;
   };
 
-  hpos-config-into-base36-id = buildRustPackage rustPlatform {
+  hpos-config-into-base36-id = rustPlatform.buildRustPackage {
     name = "hpos-config-into-base36-id";
     inherit src;
     cargoDir = "into-base36-id";
@@ -62,7 +62,7 @@ in
     doCheck = false;
   };
 
-  hpos-config-into-keystore = buildRustPackage rustPlatform {
+  hpos-config-into-keystore = rustPlatform.buildRustPackage {
     name = "hpos-config-into-keystore";
     inherit src;
     cargoDir = "into-keystore";
@@ -76,7 +76,7 @@ in
     doCheck = false;
   };
 
-  hpos-config-is-valid = buildRustPackage rustPlatform {
+  hpos-config-is-valid = rustPlatform.buildRustPackage {
     name = "hpos-config-is-valid";
     inherit src;
     cargoDir = "is-valid";

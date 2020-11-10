@@ -39,10 +39,7 @@ let
 in
 
 {
-  inherit (callPackage ./aorura {})
-    aorura-cli
-    aorura-emu
-    ;
+  inherit (callPackage ./aorura {}) aorura;
 
   inherit (callPackage cargo-to-nix {})
     buildRustPackage
@@ -51,16 +48,13 @@ in
 
   inherit (callPackage gitignore {}) gitignoreSource;
 
-  inherit (callPackage ./holo-auth {}) holo-auth-client;
+  inherit (callPackage ./holo-auth {}) holo-auth;
 
-  inherit (callPackage ./holo-router {})
-    holo-router-agent
-    holo-router-gateway
-    ;
+  inherit (callPackage ./holo-router {}) holo-router;
 
   inherit (callPackage hp-admin {}) hp-admin-ui;
 
-  inherit (callPackage ./hp-admin-crypto {}) hp-admin-crypto-server;
+  inherit (callPackage ./hp-admin-crypto {}) hp-admin-crypto;
 
   inherit (callPackage ./hpos-config {})
     hpos-config-gen-cli
