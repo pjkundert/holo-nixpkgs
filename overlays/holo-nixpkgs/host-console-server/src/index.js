@@ -5,15 +5,15 @@ const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv
 
-if (!argv.admin_port) {
+if (!argv.adminPort) {
   throw new Error('Host console server requires --admin-port option.')
 }
 
-if (!argv.app_port) {
+if (!argv.appPort) {
   throw new Error('Host console server requires --app-port option.')
 }
 
-if (!argv.hha_hash) {
+if (!argv.hhaHash) {
   throw new Error('Host console server requires --hha-hash option.')
 }
 
@@ -24,15 +24,15 @@ const cellIdhasDnaHash = dnaHash => cellId => true
 const agentKeyFromCellId = cellId => cellId[0]
 
 app.get('/hosted_happs', async (_, res) => {
-  const adminWebsocket = await AdminWebsocket.connect(`ws://localhost:${argv.admin_port}`)
+  const adminWebsocket = await AdminWebsocket.connect(`ws://localhost:${argv.adminPort}`)
 
   const cellIds = await adminWebsocket.listCellIds()
 
-  const hhaCellId = cellIds.find(cellIdhasDnaHash(argv.hha_hash))
+  const hhaCellId = cellIds.find(cellIdhasDnaHash(argv.hhaHash))
 
   const agentKey = agentKeyFromCellId(hhaCellId)
 
-  const appWebsocket = await AppWebsocket.connect(`ws://localhost:${argv.app_port}`)
+  const appWebsocket = await AppWebsocket.connect(`ws://localhost:${argv.appPort}`)
 
   const happs = await appWebsocket.callZome({
     cellId: hhaCellId,
