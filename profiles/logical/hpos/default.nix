@@ -62,6 +62,8 @@ in
 
   services.hpos-admin.enable = true;
 
+  services.host-console-server.enable = true;  
+
   services.hpos-init.enable = lib.mkDefault true;
 
   services.lair-keystore.enable = true;
@@ -115,6 +117,13 @@ in
           proxyWebsockets = true;
         };
 
+        "/hcs/v1/" = {
+          proxyPass = "'/run/host-console-server.sock'";
+          extraConfig = ''
+            auth_request /auth/;
+          '';
+        };
+
         "/auth/" = {
           proxyPass = "http://127.0.0.1:2884";
           extraConfig = ''
@@ -135,6 +144,7 @@ in
 
     virtualHosts.localhost = {
         locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+        locations."/".proxyPass = "http://unix:/run/host-console-server.sock:/";
       };
 
     appendHttpConfig = ''
