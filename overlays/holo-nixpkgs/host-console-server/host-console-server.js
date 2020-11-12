@@ -1,27 +1,41 @@
 const express = require('express')
 const app = express()
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
+const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
+const argv = yargs(hideBin(process.argv)).argv
 
-const ADMIN_PORT = '4444'
-const APP_PORT = '42233'
-const HHA_INSTANCE_ALIAS = 'hha'
+if (!argv.admin_port) {
+  throw new Error('Host console server requires --admin-port option.')
+}
+
+if (!argv.app_port) {
+  throw new Error('Host console server requires --app-port option.')
+}
+
+if (!argv.hha_hash) {
+  throw new Error('Host console server requires --hha-hash option.')
+}
+
 const UNIX_SOCKET = '/run/host-console-server.sock'
 
+// TODO: write these functions
+const cellIdhasDnaHash = dnaHash => cellId => true
+const agentKeyFromCellId = cellId => cellId[0]
+
 app.get('/hosted_happs', async (_, res) => {
-  const adminWebsocket = await AdminWebsocket.connect(`ws://localhost:${ADMIN_PORT}`)
+  const adminWebsocket = await AdminWebsocket.connect(`ws://localhost:${argv.admin_port}`)
 
-  const result = await adminWebsocket.listDnas({})
+  const cellIds = await adminWebsocket.listCellIds()
 
-  const hhaInstanceId = result.find(dna => dna.instanceId.indexOf(HHA_INSTANCE_ALIAS) >= 0).instanceId
+  const hhaCellId = cellIds.find(cellIdhasDnaHash(argv.hha_hash))
 
-  const appWebsocket = await AppWebsocket.connect(`ws://localhost:${APP_PORT}`)
+  const agentKey = agentKeyFromCellId(hhaCellId)
 
-  const agentKey = adminWebsocket.generateAgentPubKey()
-
-  const cellId = hhaInstanceId + agentKey
+  const appWebsocket = await AppWebsocket.connect(`ws://localhost:${argv.app_port}`)
 
   const happs = await appWebsocket.callZome({
-    cellId,
+    cellId: hhaCellId,
     zome_name: 'hha',
     fn_name: 'get_happs',
     provenance: agentKey,
