@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, nodejs, npmToNix }:
+{ stdenv,  nodejs, npmToNix, gitignoreSource }:
 
 {
   host-console-server = stdenv.mkDerivation rec {
