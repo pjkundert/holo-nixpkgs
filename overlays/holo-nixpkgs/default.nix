@@ -121,7 +121,7 @@ in
     router-gateway = holo.buildProfile "router-gateway";
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
-  
+
   extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
 
   holo-cli = callPackage ./holo-cli {};
@@ -275,6 +275,8 @@ in
   };
 
   inherit (callPackage ./self-hosted-happs {}) self-hosted-happs-node;
+
+  inherit (callPackage ./host-console-server {}) host-console-server;
 
   wrangler = callPackage ./wrangler {};
 
