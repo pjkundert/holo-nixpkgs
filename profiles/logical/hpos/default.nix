@@ -10,7 +10,7 @@ let
     done
     exec ${simp_le}/bin/simp_le \
       --default_root ${config.security.acme.certs.default.webroot} \
-      --valid_min ${toString config.security.acme.validMin} \
+      --valid_min ${toString (config.security.acme.validMinDays * 24 * 60 * 60)} \
       -d "$base36_id.holohost.net" \
       -f fullchain.pem \
       -f full.pem \
