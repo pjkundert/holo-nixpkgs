@@ -1,0 +1,16 @@
+{
+  "name": "host-console-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "host-console-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@holochain/conductor-api": "0.0.1-dev.10",
+    "express": "^4.17.1",
+    "yargs": "^16.1.0"
+  }
+}

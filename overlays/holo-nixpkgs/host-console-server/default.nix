@@ -3,7 +3,7 @@
 , fetchFromGitHub
 , makeWrapper
 , nodejs
-, npmToNix
+, node2nix
 , ps
 , python
 , fetchgit
@@ -11,22 +11,17 @@
 
 stdenv.mkDerivation rec {
   name = "host-console-server";
-
-  buildInputs = [ python ];
+  src = gitignoreSource ./.;
 
   nativeBuildInputs = [
     makeWrapper
     nodejs
+    # REVIEW: why do we need this? ask @mjbrisebois
+    ps
   ];
 
-  buildCommand = ''
-    makeWrapper ${python3}/bin/python3 $out/bin/${name} \
-      --add-flags ${./hpos-admin.py} \
-      --prefix PATH : ${makeBinPath [ hpos-config-is-valid zerotierone hpos-reset ]}
-  '';
-
   preConfigure = ''
-    cp -r ${npmToNix { inherit src; }} node_modules
+    cp -r ${node2nix { inherit src; }} node_modules
     chmod -R +w node_modules
     patchShebangs node_modules
   '';
@@ -46,32 +41,11 @@ stdenv.mkDerivation rec {
     patchShebangs $out
   '';
 
-  # HACK: consider flipping it on when test timeout issues are resolved
-  doCheck = false;
-}
-
-
-
-
-
-
-
-
-{ stdenv, makeWrapper, python3, hpos-config-is-valid, zerotierone, hpos-reset }:
-
-with stdenv.lib;
-
-stdenv.mkDerivation rec {
-  name = "host-console-server";
-
-  nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ python3 ];
-
-  buildCommand = ''
-    makeWrapper ${python3}/bin/python3 $out/bin/${name} \
-      --add-flags ${./hpos-admin.py} \
-      --prefix PATH : ${makeBinPath [ hpos-config-is-valid zerotierone hpos-reset ]}
+  checkPhase = ''
+      make test-nix
+      make stop-sim2h
   '';
 
-  meta.platforms = platforms.linux;
+  # HACK: consider flipping it on when test timeout issues are resolved
+  doCheck = false;
 }
