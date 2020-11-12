@@ -144,7 +144,6 @@ in
 
     virtualHosts.localhost = {
         locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
-        locations."/".proxyPass = "http://unix:/run/host-console-server.sock:/";
       };
 
     appendHttpConfig = ''
