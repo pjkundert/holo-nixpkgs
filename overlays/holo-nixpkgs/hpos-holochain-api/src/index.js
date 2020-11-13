@@ -13,7 +13,7 @@ if (!argv.appId) {
   throw new Error('Host console server requires --app-id option.')
 }
 
-const UNIX_SOCKET = '/run/host-console-server.sock'
+const UNIX_SOCKET = '/run/hpos-holochain-api.sock'
 
 app.get('/hosted_happs', async (_, res) => {
   const appWebsocket = await AppWebsocket.connect(`ws://localhost:${argv.appPort}`)

@@ -1,8 +1,8 @@
 {
-  "name": "host-console-server",
+  "name": "hpos-holochain-api",
   "version": "1.0.0",
   "description": "",
-  "main": "host-console-server.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.cjs"

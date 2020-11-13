@@ -62,7 +62,7 @@ in
 
   services.hpos-admin.enable = true;
 
-  services.host-console-server.enable = true;  
+  services.hpos-holochain-api.enable = true;  
 
   services.hpos-init.enable = lib.mkDefault true;
 
@@ -118,7 +118,7 @@ in
         };
 
         "/hcs/v1/" = {
-          proxyPass = "'/run/host-console-server.sock'";
+          proxyPass = "'/run/hpos-holochain-api.sock'";
           extraConfig = ''
             auth_request /auth/;
           '';
