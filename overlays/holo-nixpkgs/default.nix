@@ -276,7 +276,7 @@ in
 
   inherit (callPackage ./self-hosted-happs {}) self-hosted-happs-node;
 
-  inherit (callPackage ./host-console-server {}) host-console-server;
+  inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
   wrangler = callPackage ./wrangler {};
 

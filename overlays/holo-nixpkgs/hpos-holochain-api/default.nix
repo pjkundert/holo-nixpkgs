@@ -1,8 +1,8 @@
 { stdenv,  nodejs, npmToNix, gitignoreSource }:
 
 {
-  host-console-server = stdenv.mkDerivation rec {
-    name = "host-console-server";
+  hpos-holochain-api = stdenv.mkDerivation rec {
+    name = "hpos-holochain-api";
     src = gitignoreSource ./.;
 
     buildInputs = [ nodejs ];
