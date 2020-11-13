@@ -14,6 +14,8 @@ let
       -d "$base36_id.holohost.net" \
       -f fullchain.pem \
       -f full.pem \
+      -f chain.pem \
+      -f cert.pem \
       -f key.pem \
       -f account_key.json \
       -f account_reg.json \
