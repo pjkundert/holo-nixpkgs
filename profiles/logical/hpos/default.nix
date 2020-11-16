@@ -215,7 +215,9 @@ in
 
   system.stateVersion = "20.03";
 
-  users.users.nginx.extraGroups = [ "hpos-admin-users" ];
+  users.groups.hpos-api-users = {};
+
+  users.users.nginx.extraGroups = [ "hpos-api-users" ];
 
   users.users.holo.isNormalUser = true;
 
