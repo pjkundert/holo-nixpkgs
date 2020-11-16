@@ -201,6 +201,9 @@ in
   systemd.services.acme-default.serviceConfig.ExecStart =
     lib.mkForce "${holo-router-acme}/bin/holo-router-acme";
 
+  systemd.services.acme-default.serviceConfig.WorkingDirectory =
+    lib.mkForce "${config.security.acme.certs.default.directory}";
+
   system.stateVersion = "20.03";
 
   users.users.nginx.extraGroups = [ "hpos-admin-users" ];
