@@ -22,7 +22,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js";
+        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js --app-port=42233 --app-id=core-hha";
         User = "hpos-holochain-api";
         Group = "hpos-api-group";
       };

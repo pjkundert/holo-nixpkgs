@@ -125,7 +125,7 @@ in
           proxyWebsockets = true;
         };
 
-        "/hcs/v1/" = {
+        "/holochain-api/v1/" = {
           proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
           extraConfig = ''
             auth_request /auth/;
