@@ -20,14 +20,14 @@ makeTest {
     services.nginx = {
       enable = true;
       virtualHosts.localhost = {
-        locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+        locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
       };
     };
 
     systemd.services.hpos-admin.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
     systemd.services.holochain-conductor.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
 
-    users.users.nginx.extraGroups = [ "hpos-admin-users" ];
+    users.users.nginx.extraGroups = [ "hpos-api-group" ];
 
     virtualisation.memorySize = 3072;
   };
@@ -46,7 +46,7 @@ makeTest {
 
     machine.succeed("systemctl start hpos-admin.service")
     machine.wait_for_unit("hpos-admin.service")
-    machine.wait_for_file("/run/hpos-admin.sock")
+    machine.wait_for_file("/run/hpos-admin-api/hpos-admin-api.sock")
     machine.succeed(
 	"hpos-admin-client --url=http://localhost put-settings example KbFzEiWEmM1ogbJbee2fkrA1"
     )

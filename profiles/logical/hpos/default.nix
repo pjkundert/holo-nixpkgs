@@ -114,7 +114,7 @@ in
         };
 
         "/api/v1/" = {
-          proxyPass = "http://unix:/run/hpos-admin.sock:/";
+          proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
           extraConfig = ''
             auth_request /auth/;
           '';
@@ -126,7 +126,7 @@ in
         };
 
         "/hcs/v1/" = {
-          proxyPass = "'/run/hpos-holochain-api.sock'";
+          proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
           extraConfig = ''
             auth_request /auth/;
           '';
@@ -151,7 +151,7 @@ in
     };
 
     virtualHosts.localhost = {
-        locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+        locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
       };
 
     appendHttpConfig = ''
@@ -215,9 +215,9 @@ in
 
   system.stateVersion = "20.03";
 
-  users.groups.hpos-api-users = {};
+  users.groups.hpos-api-group = {};
 
-  users.users.nginx.extraGroups = [ "hpos-api-users" ];
+  users.users.nginx.extraGroups = [ "hpos-api-group" ];
 
   users.users.holo.isNormalUser = true;
 

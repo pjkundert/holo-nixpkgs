@@ -22,10 +22,19 @@ in
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/bin/hpos-holochain-api";
+        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js";
         User = "hpos-holochain-api";
-        Group = "hpos-api-users";
+        Group = "hpos-api-group";
       };
+    };
+
+    systemd.tmpfiles.rules = [
+      "d /run/hpos-holochain-api 0770 hpos-holochain-api hpos-api-group - -"
+    ];
+
+    users.users.hpos-holochain-api = {
+      isSystemUser = true;
+      group = "hpos-api-group";
     };
   };
 }

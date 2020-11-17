@@ -23,9 +23,18 @@ in
 
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/hpos-admin";
-        User = "hpos-holochain-api";
-        Group = "hpos-api-users";
+        User = "hpos-admin-api";
+        Group = "hpos-api-group";
       };
+    };
+
+    systemd.tmpfiles.rules = [
+      "d /run/hpos-admin-api 0770 hpos-admin-api hpos-api-group - -"
+    ];
+
+    users.users.hpos-admin-api = {
+      isSystemUser = true;
+      group = "hpos-api-group";
     };
   };
 }

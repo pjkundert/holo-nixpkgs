@@ -266,4 +266,4 @@ def unix_socket(path):
 
 if __name__ == '__main__':
     spawn(rebuild_worker)
-    pywsgi.WSGIServer(unix_socket('/run/hpos-admin.sock'), app).serve_forever()
+    pywsgi.WSGIServer(unix_socket('/run/hpos-admin-api/hpos-admin-api.sock'), app).serve_forever()
