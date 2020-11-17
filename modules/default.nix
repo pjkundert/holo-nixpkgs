@@ -11,7 +11,6 @@
     ./profiles/hpos-admin-features.nix
     ./services/aorura-emu.nix
     ./services/automount.nix
-    ./services/dnscrypt-proxy2.nix
     ./services/holo-auth-client.nix
     ./services/holo-router-agent.nix
     ./services/holo-router-gateway.nix
@@ -22,7 +21,6 @@
     ./services/hpos-init.nix
     ./services/hpos-led-manager.nix
     ./services/lair-keystore.nix
-    ./services/magic-wormhole-mailbox-server.nix
     ./services/self-hosted-happs.nix
     ./system/holo-nixpkgs/auto-upgrade.nix
     ./system/holo-nixpkgs/usb-reset.nix

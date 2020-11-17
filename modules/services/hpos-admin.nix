@@ -19,7 +19,7 @@ in
   config = mkIf cfg.enable {
     systemd.paths.hpos-admin-socket-setup = {
       wantedBy = [ "default.target" ];
-      pathConfig.PathExists = "/run/hpos-admin.sock";
+      pathConfig.PathChanged = "/run/hpos-admin.sock";
     };
 
     systemd.services.hpos-admin-socket-setup.script = ''

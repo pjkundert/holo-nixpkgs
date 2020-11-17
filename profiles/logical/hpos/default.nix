@@ -4,16 +4,18 @@ with pkgs;
 
 let
   holo-router-acme = writeShellScriptBin "holo-router-acme" ''
-    base36_id=$(${hpos-config-into-base36-id}/bin/hpos-config-into-base36-id < "$HPOS_CONFIG_PATH")
+    base36_id=$(${hpos-config}/bin/hpos-config-into-base36-id < "$HPOS_CONFIG_PATH")
     until $(${curl}/bin/curl --fail --head --insecure --max-time 10 --output /dev/null --silent "https://$base36_id.holohost.net"); do
       sleep 5
     done
     exec ${simp_le}/bin/simp_le \
       --default_root ${config.security.acme.certs.default.webroot} \
-      --valid_min ${toString config.security.acme.validMin} \
+      --valid_min ${toString (config.security.acme.validMinDays * 24 * 60 * 60)} \
       -d "$base36_id.holohost.net" \
       -f fullchain.pem \
       -f full.pem \
+      -f chain.pem \
+      -f cert.pem \
       -f key.pem \
       -f account_key.json \
       -f account_reg.json \
@@ -36,7 +38,8 @@ in
   boot.loader.grub.splashImage = ./splash.png;
   boot.loader.timeout = 1;
 
-  environment.noXlibs = true;
+  # REVIEW: `true` breaks gtk+ builds (cairo dependency)
+  environment.noXlibs = false;
 
   environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli git ];
 
@@ -48,6 +51,11 @@ in
     automatic = true;
     dates = "daily";
     options = "--delete-older-than 7d";
+  };
+
+  security.acme = {
+    acceptTerms = true;
+    email = "acme@holo.host";
   };
 
   security.sudo.wheelNeedsPassword = false;
@@ -139,6 +147,9 @@ in
 
     appendHttpConfig = ''
       limit_req_zone $binary_remote_addr zone=zone1:1m rate=2r/s;
+      types {
+        application/wasm wasm;
+      }
     '';
   };
 
@@ -169,6 +180,11 @@ in
         ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
         dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
       }
+      {
+        app_id = "elemental-chat-2";
+        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
+      }
     ];
   };
 
@@ -185,7 +201,10 @@ in
   systemd.services.acme-default.serviceConfig.ExecStart =
     lib.mkForce "${holo-router-acme}/bin/holo-router-acme";
 
-  system.stateVersion = "19.09";
+  systemd.services.acme-default.serviceConfig.WorkingDirectory =
+    lib.mkForce "${config.security.acme.certs.default.directory}";
+
+  system.stateVersion = "20.03";
 
   users.users.nginx.extraGroups = [ "hpos-admin-users" ];
 

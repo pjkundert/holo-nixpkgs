@@ -24,6 +24,10 @@ in
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
+      preStart = ''
+        rm -f ${holochain-home}/lair-keystore/pid
+      '';
+
       serviceConfig = {
         User = "holochain-rsm";
         Group = "holochain-rsm";
