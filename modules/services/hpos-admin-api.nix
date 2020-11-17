@@ -25,6 +25,7 @@ in
         ExecStart = "${cfg.package}/bin/hpos-admin-api";
         User = "hpos-admin-api";
         Group = "hpos-api-group";
+        UMask = "0002";
       };
     };
 
