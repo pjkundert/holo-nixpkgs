@@ -16,7 +16,7 @@
     ./services/holo-router-gateway.nix
     ./services/holochain.nix
     ./services/hp-admin-crypto-server.nix
-    ./services/hpos-admin.nix
+    ./services/hpos-admin-api.nix
     ./services/hpos-holochain-api.nix    
     ./services/holo-envoy.nix
     ./services/hpos-init.nix

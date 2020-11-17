@@ -3,26 +3,26 @@
 with lib;
 
 let
-  cfg = config.services.hpos-admin;
+  cfg = config.services.hpos-admin-api;
 in
 
 {
-  options.services.hpos-admin = {
+  options.services.hpos-admin-api = {
     enable = mkEnableOption "HPOS Admin";
 
     package = mkOption {
-      default = pkgs.hpos-admin;
+      default = pkgs.hpos-admin-api;
       type = types.package;
     };
   };
 
   config = mkIf cfg.enable {
-    systemd.services.hpos-admin = {
+    systemd.services.hpos-admin-api = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        ExecStart = "${cfg.package}/bin/hpos-admin";
+        ExecStart = "${cfg.package}/bin/hpos-admin-api";
         User = "hpos-admin-api";
         Group = "hpos-api-group";
       };

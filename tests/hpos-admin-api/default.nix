@@ -1,7 +1,7 @@
 { makeTest, lib, hpos, hpos-admin-client, hpos-config-gen-cli, jq }:
 
 makeTest {
-  name = "hpos-admin";
+  name = "hpos-admin-api";
 
   machine = {
     imports = [ (import "${hpos.logical}/sandbox") ];
@@ -14,7 +14,7 @@ makeTest {
       jq
     ];
 
-    services.hpos-admin.enable = true;
+    services.hpos-admin-api.enable = true;
     services.holochain-conductor.config.enable = true;
 
     services.nginx = {
@@ -24,7 +24,7 @@ makeTest {
       };
     };
 
-    systemd.services.hpos-admin.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
+    systemd.services.hpos-admin-api.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
     systemd.services.holochain-conductor.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
 
     users.users.nginx.extraGroups = [ "hpos-api-group" ];
@@ -44,8 +44,8 @@ makeTest {
     machine.wait_for_unit("holochain-conductor.service")
     machine.wait_for_open_port("42222")
 
-    machine.succeed("systemctl start hpos-admin.service")
-    machine.wait_for_unit("hpos-admin.service")
+    machine.succeed("systemctl start hpos-admin-api.service")
+    machine.wait_for_unit("hpos-admin-api.service")
     machine.wait_for_file("/run/hpos-admin-api/hpos-admin-api.sock")
     machine.succeed(
 	"hpos-admin-client --url=http://localhost put-settings example KbFzEiWEmM1ogbJbee2fkrA1"

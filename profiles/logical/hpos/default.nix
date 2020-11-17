@@ -68,7 +68,7 @@ in
 
   services.hp-admin-crypto-server.enable = true;
 
-  services.hpos-admin.enable = true;
+  services.hpos-admin-api.enable = true;
 
   services.hpos-holochain-api.enable = true;  
 

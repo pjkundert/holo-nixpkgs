@@ -164,7 +164,7 @@ in
     };
   };
 
-  hpos-admin = callPackage ./hpos-admin {
+  hpos-admin-api = callPackage ./hpos-admin-api {
     stdenv = stdenvNoCC;
     python3 = python3.withPackages (ps: with ps; [ http-parser flask gevent toml requests websockets ]);
   };
