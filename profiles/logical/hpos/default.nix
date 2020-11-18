@@ -90,12 +90,12 @@ in
           '';
         };
 
-        "/apps/" = {
-          alias = "/var/lib/self-hosted-happs/uis/";
-          extraConfig = ''
-            limit_req zone=zone1 burst=30;
-          '';
-        };
+        # "/apps/" = {
+        #   alias = "/var/lib/self-hosted-happs/uis/";
+        #   extraConfig = ''
+        #     limit_req zone=zone1 burst=30;
+        #   '';
+        # };
 
         "~ ^/admin(?:/.*)?$" = {
             extraConfig = ''
@@ -124,7 +124,7 @@ in
         };
 
         "/auth/" = {
-          proxyPass = "http://127.0.0.1:2884";
+          proxyPass = "http://127.0.0.1:2883";
           extraConfig = ''
             internal;
             proxy_set_header X-Original-URI $request_uri;
