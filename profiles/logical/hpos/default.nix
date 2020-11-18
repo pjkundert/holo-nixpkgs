@@ -72,6 +72,8 @@ in
 
   services.hpos-holochain-api.enable = true;  
 
+  services.hpos-holochain-api.enable = true;  
+
   services.hpos-init.enable = lib.mkDefault true;
 
   services.lair-keystore.enable = true;
