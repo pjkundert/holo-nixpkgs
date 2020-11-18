@@ -27,7 +27,7 @@ makeTest {
     systemd.services.hpos-admin-api.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
     systemd.services.holochain-conductor.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
 
-    users.users.nginx.extraGroups = [ "hpos-api-group" ];
+    users.users.nginx.extraGroups = [ "apis" ];
 
     virtualisation.memorySize = 3072;
   };

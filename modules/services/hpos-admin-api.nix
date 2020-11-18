@@ -23,19 +23,19 @@ in
 
       serviceConfig = {
         ExecStart = "${cfg.package}/bin/hpos-admin-api";
-        User = "hpos-admin-api";
-        Group = "hpos-api-group";
+        User = "admin-api";
+        Group = "apis";
         UMask = "0002";
       };
     };
 
     systemd.tmpfiles.rules = [
-      "d /run/hpos-admin-api 0770 hpos-admin-api hpos-api-group - -"
+      "d /run/hpos-admin-api 0770 admin-api apis - -"
     ];
 
-    users.users.hpos-admin-api = {
+    users.users.admin-api = {
       isSystemUser = true;
-      group = "hpos-api-group";
+      group = "apis";
     };
   };
 }

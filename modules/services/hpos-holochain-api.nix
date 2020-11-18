@@ -23,19 +23,19 @@ in
 
       serviceConfig = {
         ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js --app-port=42233 --app-id=core-hha";
-        User = "hpos-holochain-api";
-        Group = "hpos-api-group";
+        User = "hc-api";
+        Group = "apis";
         UMask = "0002";
       };
     };
 
     systemd.tmpfiles.rules = [
-      "d /run/hpos-holochain-api 0770 hpos-holochain-api hpos-api-group - -"
+      "d /run/hpos-holochain-api 0770 hc-api apis - -"
     ];
 
-    users.users.hpos-holochain-api = {
+    users.users.hc-api = {
       isSystemUser = true;
-      group = "hpos-api-group";
+      group = "apis";
     };
   };
 }

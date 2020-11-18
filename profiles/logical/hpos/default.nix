@@ -217,9 +217,9 @@ in
 
   system.stateVersion = "20.03";
 
-  users.groups.hpos-api-group = {};
+  users.groups.apis = {};
 
-  users.users.nginx.extraGroups = [ "hpos-api-group" ];
+  users.users.nginx.extraGroups = [ "apis" ];
 
   users.users.holo.isNormalUser = true;
 
