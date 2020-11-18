@@ -70,9 +70,7 @@ in
 
   services.hpos-admin-api.enable = true;
 
-  services.hpos-holochain-api.enable = true;  
-
-  services.hpos-holochain-api.enable = true;  
+  services.hpos-holochain-api.enable = true;
 
   services.hpos-init.enable = lib.mkDefault true;
 
