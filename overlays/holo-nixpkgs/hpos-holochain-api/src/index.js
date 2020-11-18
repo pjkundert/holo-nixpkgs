@@ -1,3 +1,4 @@
+const fs = require('fs')
 const express = require('express')
 const app = express()
 const { AppWebsocket } = require('@holochain/conductor-api')
@@ -21,7 +22,7 @@ app.get('/hosted_happs', async (_, res) => {
   const appInfo = appWebsocket.appInfo({ app_id: argv.appId })
 
   if (!appInfo) {
-    throw new Error(`Couldn't find Holo Hosting App with id ${ argv.appId }`)
+    throw new Error(`Couldn't find Holo Hosting App with id ${argv.appId}`)
   }
 
   const cellId = appInfo.cell_data[0][0]
@@ -43,6 +44,14 @@ app.get('/hosted_happs', async (_, res) => {
 
   res.send(presentedHapps)
 })
+
+try {
+  if (fs.existsSync(UNIX_SOCKET)) {
+    fs.unlink(UNIX_SOCKET)
+  }
+} catch (err) {
+  console.error(err)
+}
 
 app.listen(UNIX_SOCKET, () => {
   console.log(`Host console server running`)
