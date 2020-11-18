@@ -4,13 +4,6 @@ with final;
 with lib;
 
 let
-  aorura = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "aorura";
-    rev = "2aef90935d6e965cf6ec02208f84e4b6f43221bd";
-    sha256 = "00d9c6f0hh553hgmw01lp5639kbqqyqsz66jz35pz8xahmyk5wmw";
-  };
-
   cargo-to-nix = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "cargo-to-nix";
@@ -25,20 +18,6 @@ let
     sha256 = "0jrh5ghisaqdd0vldbywags20m2cxpkbbk5jjjmwaw0gr8nhsafv";
   };
 
-  holo-auth = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "holo-auth";
-    rev = "43009e8ab644621dd4272c4723d0e603412f062b";
-    sha256 = "1c8p9xjhfxgh11vf55fwkglffv0qjc8gzc98kybqznhm81l8y2fl";
-  };
-
-  holo-router = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "holo-router";
-    rev = "01421a799a2df06272307fc322f86e73595ff006";
-    sha256 = "1qv9h82gl8lcm3kbkkq0gskd38c5msp9lxz5hvaxj6q8amc8884v";
-  };
-
   hp-admin = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "hp-admin";
@@ -46,23 +25,9 @@ let
     sha256 = "0mvhlgp6nlv069wvbc5nbd8229i3fjzyk0qszlmkv9hp0jyph51y";
   };
 
-  hp-admin-crypto = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "hp-admin-crypto";
-    rev = "321833b8711d4141de419fa3d1610165621569a5";
-    sha256 = "0pssizqpmyxjwzqgkrd3vdg3r30cvz4zwb23zf895rm7djhq52sn";
-  };
-
-  hpos-config = fetchFromGitHub {
-    owner = "Holo-Host";
-    repo = "hpos-config";
-    rev = "920bd38401edf0b5e81da489d5e519852d7b3218";
-    sha256 = "1sc4jhn4h0phxi1pn20c5wq7x8zs3d8dis9il7fdc5iiszki5413";
-  };
-
   nixpkgs-mozilla = fetchTarball {
-    url = "https://github.com/mozilla/nixpkgs-mozilla/archive/dea7b9908e150a08541680462fe9540f39f2bceb.tar.gz";
-    sha256 = "0kvwbnwxbqhc3c3hn121c897m89d9wy02s8xcnrvqk9c96fj83qw";
+    url = "https://github.com/mozilla/nixpkgs-mozilla/archive/8c007b60731c07dd7a052cce508de3bb1ae849b4.tar.gz";
+    sha256 = "1zybp62zz0h077zm2zmqs2wcg3whg6jqaah9hcl1gv4x8af4zhs6";
   };
 
   npm-to-nix = fetchFromGitHub {
@@ -76,10 +41,7 @@ in
 {
   yarn2nix = yarn2nix-moretea;
 
-  inherit (callPackage aorura {})
-    aorura-cli
-    aorura-emu
-    ;
+  inherit (callPackage ./aorura {}) aorura;
 
   inherit (callPackage cargo-to-nix {})
     buildRustPackage
@@ -88,22 +50,15 @@ in
 
   inherit (callPackage gitignore {}) gitignoreSource;
 
-  inherit (callPackage holo-auth {}) holo-auth-client;
+  inherit (callPackage ./holo-auth {}) holo-auth;
 
-  inherit (callPackage holo-router {})
-    holo-router-agent
-    holo-router-gateway
-    ;
+  inherit (callPackage ./holo-router {}) holo-router;
 
   inherit (callPackage hp-admin {}) hp-admin-ui;
 
-  inherit (callPackage hp-admin-crypto {}) hp-admin-crypto-server;
+  inherit (callPackage ./hp-admin-crypto {}) hp-admin-crypto;
 
-  inherit (callPackage hpos-config {})
-    hpos-config-gen-cli
-    hpos-config-into-base36-id
-    hpos-config-is-valid
-    ;
+  inherit (callPackage ./hpos-config {}) hpos-config;
 
   inherit (callPackage npm-to-nix {}) npmToNix;
 
@@ -209,7 +164,7 @@ in
     };
   };
 
-  hpos-admin = callPackage ./hpos-admin {
+  hpos-admin-api = callPackage ./hpos-admin-api {
     stdenv = stdenvNoCC;
     python3 = python3.withPackages (ps: with ps; [ http-parser flask gevent toml requests websockets ]);
   };
@@ -232,10 +187,14 @@ in
 
   inherit (callPackage ./hpos-update {}) hpos-update-cli;
 
-  hydra = previous.hydra.overrideAttrs (
+  hydra = let
+    hydraUnpatched = previous.hydra-unstable;
+  in hydraUnpatched.overrideAttrs (
     super: {
       doCheck = false;
       patches = [
+        # upstreamed: ./hydra/fix-declarative-jobsets-type.patch
+        # upstreamed: ./hydra/fix-eval-jobs-build.patch
         ./hydra/logo-vertical-align.diff
         ./hydra/no-restrict-eval.diff
         ./hydra/secure-github.diff
@@ -264,13 +223,7 @@ in
     }
   );
 
-  magic-wormhole-mailbox-server = python3Packages.callPackage ./magic-wormhole-mailbox-server {};
-
   nginx = nginxStable;
-
-  nginxStable = (callPackage "${pkgs.path}/pkgs/servers/http/nginx/stable.nix" {}).overrideAttrs (super: {
-    patches = super.patches ++ [ ./nginx/add-wasm-mime-type.patch ];
-  });
 
   nodejs = nodejs-12_x;
 

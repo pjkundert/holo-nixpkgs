@@ -17,24 +17,24 @@ in
   };
 
   config = mkIf cfg.enable {
-    systemd.paths.hpos-holochain-api-socket-setup = {
-      wantedBy = [ "default.target" ];
-      pathConfig.PathExists = "/run/hpos-holochain-api.sock";
-    };
-
-    systemd.services.hpos-holochain-api-socket-setup.script = ''
-      chgrp hpos-admin-users /run/hpos-holochain-api.sock
-      chmod g+w /run/hpos-holochain-api.sock
-      rm -rf /var/lib/holochain-conductor
-    '';
-
     systemd.services.hpos-holochain-api = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
 
-      serviceConfig.ExecStart = "${cfg.package}/bin/hpos-holochain-api";
+      serviceConfig = {
+        ExecStart = "${pkgs.nodejs}/bin/node ${cfg.package}/main.js --app-port=42233 --app-id=core-hha";
+        User = "hpos-holochain-api";
+        Group = "hpos-api-group";
+      };
     };
 
-    users.groups.hpos-admin-users = {};
+    systemd.tmpfiles.rules = [
+      "d /run/hpos-holochain-api 0770 hpos-holochain-api hpos-api-group - -"
+    ];
+
+    users.users.hpos-holochain-api = {
+      isSystemUser = true;
+      group = "hpos-api-group";
+    };
   };
 }

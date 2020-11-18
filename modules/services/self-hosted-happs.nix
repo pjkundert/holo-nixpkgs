@@ -29,12 +29,12 @@ in
 
     systemd.services.self-hosted-happs = {
       after = [ "network.target" "holochain.service" ];
-      requires = [ "holochain.service" ];
+      requisite = [ "holochain.service" ];
       wantedBy = [ "multi-user.target" ];
 
       preStart = ''
         ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeJSON cfg.default-list} > ${cfg.working-directory}/config.yaml
-        sleep .1 # wait for holochian admin interface to be ready
+        sleep 2 # wait for holochian admin interface to be ready
       '';
 
       serviceConfig = {
