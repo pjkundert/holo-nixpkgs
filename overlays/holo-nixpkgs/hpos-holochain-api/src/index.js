@@ -21,7 +21,7 @@ app.get('/hosted_happs', async (_, res) => {
   const appInfo = appWebsocket.appInfo({ app_id: argv.appId })
 
   if (!appInfo) {
-    throw new Error (`Couldn't find Holo Hosting App with id ${ argv.appId }`)
+    throw new Error(`Couldn't find Holo Hosting App with id ${ argv.appId }`)
   }
 
   const cellId = appInfo.cell_data[0][0]
@@ -29,7 +29,7 @@ app.get('/hosted_happs', async (_, res) => {
   const agentKey = cellId[1]
 
   const happs = await appWebsocket.callZome({
-    cellId,
+    cell_id: cellId,
     zome_name: 'hha',
     fn_name: 'get_happs',
     provenance: agentKey,
@@ -37,8 +37,8 @@ app.get('/hosted_happs', async (_, res) => {
   })
 
   const presentedHapps = happs.map(happ => ({
-    id: happ.id,
-    name: happ.name
+    id: happ.happ_id,
+    name: happ.happ_bundle.name
   }))
 
   res.send(presentedHapps)
