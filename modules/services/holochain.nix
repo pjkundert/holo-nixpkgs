@@ -32,6 +32,8 @@ in
       requires = [ "lair-keystore.service" ];
       wantedBy = [ "multi-user.target" ];
 
+      #environment.RUST_LOG = "debug";
+
       preStart = ''
         ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeJSON cfg.config} > $STATE_DIRECTORY/holochain-config.yaml
         sleep .1 # wait for keystore socket to be ready
