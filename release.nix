@@ -10,13 +10,14 @@ let
 
   overlayPackages =
     recurseIntoAttrs (getAttrs (attrNames (overlay {} {})) pkgs);
+  
+  release-lib = import (pkgs.path + "/pkgs/top-level/release-lib.nix");
 in
 
-  with import "${pkgs.path}/pkgs/top-level/release-lib.nix" {
+  with release-lib {
     nixpkgsArgs.overlays = [ overlay ];
     supportedSystems = [
       "aarch64-linux"
-      "x86_64-darwin"
       "x86_64-linux"
     ];
   };

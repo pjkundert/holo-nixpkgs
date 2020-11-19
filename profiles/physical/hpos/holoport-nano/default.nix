@@ -26,7 +26,7 @@
 
   boot.loader.grub.enable = false;
 
-  services.holochain-conductor.enable = lib.mkForce false;
+  services.holochain.enable = lib.mkForce false;
 
   services.automount.enable = true;
 

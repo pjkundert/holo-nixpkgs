@@ -1,27 +1,4 @@
-let
-  nixpkgs = fetchTarball {
-    url = "https://github.com/NixOS/nixpkgs/archive/c5d5561f772f9ed9de272e3ccb7426de6e862dd1.tar.gz";
-    sha256 = "1n41kg3xl2lbwywxpm1bdi37vbrhcww2kg6rl2lwfj9fg7w5sl76";
-  };
-
-  inherit (import nixpkgs {}) stdenvNoCC fetchpatch;
-in
-
-stdenvNoCC.mkDerivation {
-  name = "nixpkgs";
-  src = nixpkgs;
-
-  patches = [
-    ./ext4-no-resize2fs.diff
-    ./rust-aarch64-musl-cross.diff
-    ./rust-home.diff
-    ./virtualbox-image-no-audio-mouse-usb.diff
-    ./zerotier-1.4.6.patch
-  ];
-
-  phases = [ "unpackPhase" "patchPhase" "installPhase" ];
-
-  installPhase = ''
-    mv $PWD $out
-  '';
+fetchTarball {
+  url = "https://github.com/NixOS/nixpkgs/archive/c156dc70be7db130fd2cf33f9f0d98655a40c61b.tar.gz";
+  sha256 = "0jqvlnqfgkfd9prh5hry0rf1qmy3i2fa0rn0dlpn8imfxz9hp285";
 }
