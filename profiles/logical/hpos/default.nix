@@ -179,7 +179,7 @@ in
       ];
       network = {
         bootstrap_service = "https://bootstrap.holo.host";
-        transport_pool = {
+        transport_pool = [{
           type = "proxy";
           sub_transport = {
             type = "quic";
@@ -188,7 +188,7 @@ in
             type = "remote_proxy_client";
             proxy_url = "kitsune-proxy://CIW6PxKxsPPlcuvUCbMcKwUpaMSmB7kLD8xyyj4mqcw/kitsune-quic/h/proxy.holochain.org/p/5778/--";
           };
-        };
+        }];
       };
     };
   };
