@@ -30,10 +30,6 @@ in
       # signing_service_uri = "http://localhost:9676";
     };
   };
-<<<<<<< HEAD
 
   services.lair-keystore.enable = true;
-
-=======
->>>>>>> origin/staging
 }
