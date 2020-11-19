@@ -121,7 +121,7 @@ in
     router-gateway = holo.buildProfile "router-gateway";
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
-  
+
   extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
 
   holo-cli = callPackage ./holo-cli {};
@@ -164,7 +164,7 @@ in
     };
   };
 
-  hpos-admin = callPackage ./hpos-admin {
+  hpos-admin-api = callPackage ./hpos-admin-api {
     stdenv = stdenvNoCC;
     python3 = python3.withPackages (ps: with ps; [ http-parser flask gevent toml requests websockets ]);
   };
@@ -275,6 +275,8 @@ in
   };
 
   inherit (callPackage ./self-hosted-happs {}) self-hosted-happs-node;
+
+  inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
   wrangler = callPackage ./wrangler {};
 

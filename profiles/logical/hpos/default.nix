@@ -68,7 +68,9 @@ in
 
   services.hp-admin-crypto-server.enable = true;
 
-  services.hpos-admin.enable = true;
+  services.hpos-admin-api.enable = true;
+
+  services.hpos-holochain-api.enable = true;
 
   services.hpos-init.enable = lib.mkDefault true;
 
@@ -112,7 +114,7 @@ in
         };
 
         "/api/v1/" = {
-          proxyPass = "http://unix:/run/hpos-admin.sock:/";
+          proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
           extraConfig = ''
             auth_request /auth/;
           '';
@@ -121,6 +123,13 @@ in
         "/api/v1/ws/" = {
           proxyPass = "http://127.0.0.1:42233";
           proxyWebsockets = true;
+        };
+
+        "/holochain-api/v1/" = {
+          proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
+          extraConfig = ''
+            auth_request /auth/;
+          '';
         };
 
         "/auth/" = {
@@ -142,7 +151,7 @@ in
     };
 
     virtualHosts.localhost = {
-        locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+        locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
       };
 
     appendHttpConfig = ''
@@ -206,7 +215,9 @@ in
 
   system.stateVersion = "20.03";
 
-  users.users.nginx.extraGroups = [ "hpos-admin-users" ];
+  users.groups.apis = {};
+
+  users.users.nginx.extraGroups = [ "apis" ];
 
   users.users.holo.isNormalUser = true;
 
