@@ -1,19 +1,19 @@
 { config, pkgs, ... }:
 
 let
-  nixpkgs = import ../../../nixpkgs/source.nix;
+  nixpkgs = import ../../../nixpkgs/src;
 in
 
 {
   imports = [
     "${nixpkgs}/nixos/modules/installer/cd-dvd/sd-image.nix"
-    ../../hardware/holoport-nano
+    ../../physical/hpos/holoport-nano
     ../.
   ];
   
   nix.package = let
-    nixpkgs-1909-latest = import (fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-19.09.tar.gz) {};
-  in nixpkgs-1909-latest.nix;
+    nixpkgs-2009-latest = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz) {};
+  in nixpkgs-2009-latest.nix;
   
   environment.systemPackages = with pkgs; [ git ];
 
@@ -32,3 +32,4 @@ in
       -t 1
   '';
 }
+

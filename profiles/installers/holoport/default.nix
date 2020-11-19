@@ -1,13 +1,13 @@
 { config, ... }:
 
 let
-  nixpkgs = import ../../../nixpkgs/source.nix;
+  nixpkgs = import ../../../nixpkgs/src.nix;
 in
 
 {
   imports = [
     "${nixpkgs}/nixos/modules/installer/cd-dvd/iso-image.nix"
-    ../../hardware/holoport
+    ../../physical/hpos/holoport
     ../.
   ];
 

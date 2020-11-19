@@ -31,4 +31,6 @@
   services.automount.enable = true;
 
   services.hpos-led-manager.devicePath = "/dev/ttyS2";
+
+  system.hpos.target = "holoport-nano";
 }

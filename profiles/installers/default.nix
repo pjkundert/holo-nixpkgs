@@ -3,9 +3,9 @@
 with pkgs;
 
 let
-  inherit (config.system.holoportos) target;
+  inherit (config.system.hpos) target;
 
-  nixpkgs = import ../../nixpkgs/source.nix;
+  nixpkgs = import ../../nixpkgs/src;
 
   closure = import "${nixpkgs}/nixos" {
     configuration = {
@@ -35,7 +35,7 @@ in
 
   environment.noXlibs = true;
 
-  system.holoportos.install.enable = true;
+  system.hpos.install.enable = true;
 
   services.openssh = {
     enable = true;
@@ -48,7 +48,7 @@ in
 
   services.udisks2.enable = lib.mkDefault false;
 
-  system.build.baseName = "holoportos-for-${target}";
+  system.build.baseName = "hpos-for-${target}";
 
   system.extraDependencies =
     lib.optionals (stdenv.buildPlatform == stdenv.hostPlatform) [

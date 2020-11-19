@@ -125,7 +125,7 @@ in
   extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
 
   holo-cli = callPackage ./holo-cli {};
-
+  
   holo-envoy = callPackage ./holo-envoy {
     inherit (rust.packages.nightly) rustPlatform;
   };
@@ -147,6 +147,8 @@ in
   };
 
   inherit (callPackage ./host-console-ui {}) host-console-ui;
+
+  hpos-install = callPackage ./hpos-install {};
 
   hpos = recurseIntoAttrs {
     buildImage = imports:
