@@ -47,7 +47,7 @@ app.get('/hosted_happs', async (_, res) => {
 
 try {
   if (fs.existsSync(UNIX_SOCKET)) {
-    fs.unlink(UNIX_SOCKET)
+    fs.unlinkSync(UNIX_SOCKET)
   }
 } catch (err) {
   console.error(err)
