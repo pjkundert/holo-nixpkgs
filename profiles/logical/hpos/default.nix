@@ -199,12 +199,12 @@ in
     default-list = [
       {
         app_id = "elemental-chat";
-        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        ui_url = "https://github.com/holochain/elemental-chat-ui/archive/alpha0.zip";
         dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha0/elemental-chat.dna.gz";
       }
       {
         app_id = "elemental-chat-2";
-        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
+        ui_url = "https://github.com/holochain/elemental-chat-ui/archive/alpha0.zip";
         dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha0/elemental-chat.dna.gz";
       }
     ];
