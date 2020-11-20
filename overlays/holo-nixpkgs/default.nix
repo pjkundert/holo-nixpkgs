@@ -38,7 +38,7 @@ let
   };
 in
 
-{
+rec {
   yarn2nix = yarn2nix-moretea;
 
   inherit (callPackage ./aorura {}) aorura;
@@ -123,6 +123,12 @@ in
   };
 
   extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
+
+  hc-state = writeShellScriptBin "hc-state" ''
+    ${nodejs}/bin/node ${hc-state-node}/main.js "$@"
+  '';
+
+  inherit (callPackage ./hc-state-node {}) hc-state-node; 
 
   holo-cli = callPackage ./holo-cli {};
 
