@@ -11,8 +11,6 @@ import os
 import subprocess
 import toml
 import requests
-import asyncio
-import websockets
 
 
 PROFILES_TOML_PATH = '/etc/nixos/hpos-admin-features.toml'
@@ -140,56 +138,6 @@ def enable_feature(profile, feature):
 @app.route('/profiles/<profile>/features/<feature>', methods=['DELETE'])
 def disable_feature(profile, feature):
     return set_feature_state(profile, feature, False)
-
-
-def hosted_happs():
-    conductor_config = toml.load('/var/lib/holochain-conductor/conductor-config.toml')
-    return [dna for dna in conductor_config['dnas'] if dna['holo-hosted']]
-
-
-def hosted_instances():
-    conductor_config = toml.load('/var/lib/holochain-conductor/conductor-config.toml')
-    return [instance for instance in conductor_config['instances'] if instance['holo-hosted']]
-
-async def hc_call(method, params):
-    uri = "ws://localhost:42222"
-    m = { 'jsonrpc': '2.0', 'id': '0', 'method': method, 'params': params }
-    data = json.dumps(m, indent=2)
-
-    async with websockets.connect(uri) as websocket:
-        await websocket.send(bytes(data,encoding="utf-8"))
-        response = await websocket.recv()
-        return  json.loads(response)
-
-TRAFFIC_NULL_STATE = {'start_date': None, 'total_zome_calls':0, 'value': []}
-
-def get_traffic_service_logger_call(instance_id):
-    response = asyncio.get_event_loop().run_until_complete(hc_call('call', { "instance_id": instance_id ,"zome": "service", "function": "get_traffic", "args": {"filter": "DAY"} }))
-    if 'result' in response:
-        return json.loads(response['result'])['Ok']
-    else:
-        return TRAFFIC_NULL_STATE
-
-
-@app.route('/hosted_happs', methods=['GET'])
-def get_hosted_happs():
-
-    hosted_happs_list = hosted_happs()
-    hosted_instances_list = hosted_instances()
-
-    if len(hosted_happs_list) > 0:
-        for hosted_happ in hosted_happs_list:
-            if len(hosted_instances_list) > 0:
-                num_instances = sum(hosted_happ['id'] in hosted_instance['id'] for hosted_instance in hosted_instances_list)
-                hosted_happ['stats'] = {"traffic": get_traffic_service_logger_call(hosted_happ['id']+"::servicelogger")}
-            else:
-                num_instances = 0
-                hosted_happ['stats'] = {"traffic": TRAFFIC_NULL_STATE}
-            hosted_happ['number_instances'] = num_instances
-
-    return jsonify({
-        'hosted_happs': hosted_happs_list
-    })
 
 
 def hydra_channel():
