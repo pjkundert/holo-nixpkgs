@@ -32,15 +32,17 @@ in
       requires = [ "lair-keystore.service" ];
       wantedBy = [ "multi-user.target" ];
 
+      #environment.RUST_LOG = "debug";
+
       preStart = ''
-        ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeTOML cfg.config} > $STATE_DIRECTORY/holochain-config.toml
+        ${pkgs.envsubst}/bin/envsubst < ${pkgs.writeJSON cfg.config} > $STATE_DIRECTORY/holochain-config.yaml
         sleep .1 # wait for keystore socket to be ready
       '';
 
       serviceConfig = {
         User = "holochain-rsm";
         Group = "holochain-rsm";
-        ExecStart = "${cfg.package}/bin/holochain -c ${cfg.working-directory}/holochain-config.toml";
+        ExecStart = "${cfg.package}/bin/holochain -c ${cfg.working-directory}/holochain-config.yaml";
         StateDirectory = "holochain-rsm";
       };
     };

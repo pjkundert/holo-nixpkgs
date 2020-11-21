@@ -1,13 +1,14 @@
-{ stdenv, fetchFromGitHub, nodejs, npmToNix }:
+{ stdenv,  nodejs, npmToNix, fetchFromGitHub }:
 
 {
-  self-hosted-happs-node = stdenv.mkDerivation rec {
-    name = "self-hosted-happs-node";
+  hc-state-node = stdenv.mkDerivation rec {
+    name = "hc-state-node";
+
     src = fetchFromGitHub {
-      owner = "holo-host";
-      repo = "self-hosted-happs-node";
-      rev = "4b1a3725fb2d0f3b6b66b0980589d63584872e6f";
-      sha256 = "102prnw57fjw5rnafn5az6cw90ywlqk86gpbkwfxziji2q7xsla3";
+      owner = "Holochain";
+      repo = "hc-state-cli-node";
+      rev = "318f7eea2899c876bf1e664d4e6288e5ac8d100f";
+      sha256 = "0ab0a15hmr4alxpi016v4scm3rzznappkpvwbar9wgb07j0x0xry";
     };
 
     buildInputs = [ nodejs ];
