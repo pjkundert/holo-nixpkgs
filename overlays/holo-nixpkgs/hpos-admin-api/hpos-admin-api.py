@@ -81,7 +81,7 @@ def put_settings():
     return '', 200
 
 
-# Toggling HPOS features
+# Toggling HPOS features:
 
 
 def read_profiles():
