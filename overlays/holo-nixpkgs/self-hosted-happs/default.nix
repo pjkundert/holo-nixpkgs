@@ -6,8 +6,8 @@
     src = fetchFromGitHub {
       owner = "holo-host";
       repo = "self-hosted-happs-node";
-      rev = "dfb7faf3e0b95fb9ecb44862c52f1f2e20e6dcbc";
-      sha256 = "0y08qfclq9gv8b0nqy2mn1dfz95yjd0179rwbh2b33p5k8g7j9ja";
+      rev = "4b1a3725fb2d0f3b6b66b0980589d63584872e6f";
+      sha256 = "102prnw57fjw5rnafn5az6cw90ywlqk86gpbkwfxziji2q7xsla3";
     };
 
     buildInputs = [ nodejs ];
