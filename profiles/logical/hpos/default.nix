@@ -41,7 +41,7 @@ in
   # REVIEW: `true` breaks gtk+ builds (cairo dependency)
   environment.noXlibs = false;
 
-  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli git ];
+  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git ];
 
   networking.firewall.allowedTCPPorts = [ 443 ];
 
