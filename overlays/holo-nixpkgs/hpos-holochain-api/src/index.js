@@ -19,7 +19,7 @@ const UNIX_SOCKET = '/run/hpos-holochain-api/hpos-holochain-api.sock'
 app.get('/hosted_happs', async (_, res) => {
   const appWebsocket = await AppWebsocket.connect(`ws://localhost:${argv.appPort}`)
 
-  const appInfo = appWebsocket.appInfo({ app_id: argv.appId })
+  const appInfo = appWebsocket.appInfo({ installed_app_id: argv.appId })
 
   if (!appInfo) {
     throw new Error(`Couldn't find Holo Hosting App with id ${argv.appId}`)
