@@ -222,7 +222,7 @@ in
   systemd.services.acme-default.serviceConfig.WorkingDirectory =
     lib.mkForce "${config.security.acme.certs.default.directory}";
 
-  system.stateVersion = "20.03";
+  system.stateVersion = "20.09";
 
   users.groups.apis = {};
 
