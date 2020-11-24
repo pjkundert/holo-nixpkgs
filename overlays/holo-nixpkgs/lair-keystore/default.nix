@@ -6,11 +6,11 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "holochain";
     repo = "lair";
-    rev = "7718ef2bf1386b7719a12d506b0c50e2240d162b";
-    sha256 = "01nvaz718m7r41fs3yyw2l8mswnhn6r3kqy9v6hdw8iinkg0x9qv";
+    rev = "7b5f886dd7c9060175f20c05f80d0a298cce34f0";
+    sha256 = "1rigd5q69pgbh7rfzfsaxba83x0g1amrj6yy3xf66kgly8mxzhl8";
   };
 
-  cargoSha256 = "07mf5r1yw2b2dimha6nskf1qrvyncjb5g97ilm68209h8qj0i1fy";
+  cargoSha256 = "1c2380251nzhzs7cd6mgrjpyh52614i7ca01c5kl6cgqz41k80ii";
 
   doCheck = false;
 }
