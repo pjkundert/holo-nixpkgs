@@ -29,5 +29,5 @@
   ];
 
   # Compat shim, to be removed along with /profiles/targets:
-  options.system.hpos.network = lib.mkOption {};
+  options.system.holoportos.network = lib.mkOption {};
 }
