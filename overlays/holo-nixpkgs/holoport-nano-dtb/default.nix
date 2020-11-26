@@ -14,6 +14,7 @@ stdenv.mkDerivation {
 
   patches = [
     ./uart2.diff
+    ./a64-ths.patch
   ];
 
   buildPhase = ":";
