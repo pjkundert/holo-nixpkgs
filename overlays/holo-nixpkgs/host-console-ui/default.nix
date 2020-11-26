@@ -12,5 +12,16 @@
 
     packageJSON = "${src}/package.json";
     yarnLock = "${src}/yarn.lock";
+
+    buildPhase = ''
+      yarn build
+    '';
+
+    installPhase = ''
+      ls
+      mv deps/host-console/dist $out
+    '';
+
+    distPhase = '':'';
   };
 }
