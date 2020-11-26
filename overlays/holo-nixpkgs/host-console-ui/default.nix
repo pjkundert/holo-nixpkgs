@@ -18,7 +18,6 @@
     '';
 
     installPhase = ''
-      ls
       mv deps/host-console/dist $out
     '';
 
