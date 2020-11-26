@@ -219,7 +219,7 @@ in
     }
   );
 
-  linuxPackages_latest = previous.linuxPackages_latest.extend (
+  linuxPackages_5_4 = previous.linuxPackages_5_4.extend (
     self: super: {
       sun50i-a64-gpadc-iio = self.callPackage ./linux-packages/sun50i-a64-gpadc-iio {};
     }
