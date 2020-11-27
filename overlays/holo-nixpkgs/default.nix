@@ -142,9 +142,7 @@ in
     inherit (rust.packages.holochain-rsm) rustPlatform;
   };
 
-  holoport-nano-dtb = callPackage ./holoport-nano-dtb {
-    linux = linux_latest;
-  };
+  holoport-nano-dtb = callPackage ./holoport-nano-dtb {};
 
   inherit (callPackage ./host-console-ui {}) host-console-ui;
 
@@ -219,7 +217,7 @@ in
     }
   );
 
-  linuxPackages_5_4 = previous.linuxPackages_5_4.extend (
+  linuxPackages = previous.linuxPackages.extend (
     self: super: {
       sun50i-a64-gpadc-iio = self.callPackage ./linux-packages/sun50i-a64-gpadc-iio {};
     }
