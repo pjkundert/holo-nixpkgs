@@ -29,4 +29,11 @@
   };
 
   system.holoportos.target = "holoport-nano";
+
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 1024 * 4;
+    }
+  ];
 }
