@@ -74,7 +74,7 @@ in
 
   services.lair-keystore.enable = true;
 
-  services.mingetty.autologinUser = "root";
+  services.mingetty.autologinUser = lib.mkForce "root";
 
   services.nginx = {
     enable = true;
