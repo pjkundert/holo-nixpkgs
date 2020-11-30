@@ -13,7 +13,7 @@ let
         (../targets + ("/" + target))
       ];
 
-      boot.loader.grub.device = "nodev";
+      # boot.loader.grub.device = "nodev";
 
       fileSystems."/".fsType = "tmpfs";
 

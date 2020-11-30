@@ -210,5 +210,5 @@ in
 
   users.users.holo.isNormalUser = true;
 
-  users.users.root.hashedPassword = "*";
+  users.users.root.hashedPassword = "";
 }

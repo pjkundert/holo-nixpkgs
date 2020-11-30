@@ -1,7 +1,7 @@
 { config, ... }:
 
 let
-  nixpkgs = import ../../../nixpkgs/src.nix;
+  nixpkgs = import ../../../nixpkgs/src;
 in
 
 {
@@ -12,4 +12,6 @@ in
   ];
 
   isoImage.isoBaseName = config.system.build.baseName;
+
+  isoImage.makeUsbBootable = true;
 }
