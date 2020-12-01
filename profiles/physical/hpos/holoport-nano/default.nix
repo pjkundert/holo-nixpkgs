@@ -30,4 +30,11 @@
   services.hpos-led-manager.devicePath = "/dev/ttyS2";
 
   system.hpos.target = "holoport-nano";
+
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 1024 * 4;
+    }
+  ];
 }
