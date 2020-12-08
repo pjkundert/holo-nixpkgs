@@ -12,5 +12,5 @@
 
   services.hpos-led-manager.devicePath = "/dev/ttyUSB0";
 
-  system.hpos.target = "holoport";
+  system.hpos.target = "holoport-plus";
 }
