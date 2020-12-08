@@ -12,4 +12,6 @@ in
   ];
 
   isoImage.isoBaseName = config.system.build.baseName;
+
+  isoImage.makeUsbBootable = true;
 }
