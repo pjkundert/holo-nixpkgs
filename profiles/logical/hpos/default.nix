@@ -41,7 +41,7 @@ in
   # REVIEW: `true` breaks gtk+ builds (cairo dependency)
   environment.noXlibs = false;
 
-  environment.systemPackages = [ hpos-reset hpos-admin-client hpos-update-cli git ];
+  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git ];
 
   networking.firewall.allowedTCPPorts = [ 443 ];
 
@@ -68,7 +68,9 @@ in
 
   services.hp-admin-crypto-server.enable = true;
 
-  services.hpos-admin.enable = true;
+  services.hpos-admin-api.enable = true;
+
+  services.hpos-holochain-api.enable = true;
 
   services.hpos-init.enable = lib.mkDefault true;
 
@@ -112,7 +114,7 @@ in
         };
 
         "/api/v1/" = {
-          proxyPass = "http://unix:/run/hpos-admin.sock:/";
+          proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
           extraConfig = ''
             auth_request /auth/;
           '';
@@ -121,6 +123,13 @@ in
         "/api/v1/ws/" = {
           proxyPass = "http://127.0.0.1:42233";
           proxyWebsockets = true;
+        };
+
+        "/holochain-api/v1/" = {
+          proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
+          extraConfig = ''
+            auth_request /auth/;
+          '';
         };
 
         "/auth/" = {
@@ -142,7 +151,7 @@ in
     };
 
     virtualHosts.localhost = {
-        locations."/".proxyPass = "http://unix:/run/hpos-admin.sock:/";
+        locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
       };
 
     appendHttpConfig = ''
@@ -168,6 +177,19 @@ in
           };
         }
       ];
+      network = {
+        bootstrap_service = "https://bootstrap.holo.host";
+        transport_pool = [{
+          type = "proxy";
+          sub_transport = {
+            type = "quic";
+          };
+          proxy_config = {
+            type = "remote_proxy_client";
+            proxy_url = "kitsune-proxy://CIW6PxKxsPPlcuvUCbMcKwUpaMSmB7kLD8xyyj4mqcw/kitsune-quic/h/proxy.holochain.org/p/5778/--";
+          };
+        }];
+      };
     };
   };
 
@@ -177,13 +199,9 @@ in
     default-list = [
       {
         app_id = "elemental-chat";
-        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
-        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
-      }
-      {
-        app_id = "elemental-chat-2";
-        ui_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.zip";
-        dna_url = "https://s3.eu-central-1.wasabisys.com/elemetal-chat-tests/elemental-chat.dna.gz";
+        version = "alpha1";
+        ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/alpha1/elemental-chat.zip ";
+        dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha1/elemental-chat.dna.gz";
       }
     ];
   };
@@ -206,7 +224,9 @@ in
 
   system.stateVersion = "20.09";
 
-  users.users.nginx.extraGroups = [ "hpos-admin-users" ];
+  users.groups.apis = {};
+
+  users.users.nginx.extraGroups = [ "apis" ];
 
   users.users.holo.isNormalUser = true;
 
