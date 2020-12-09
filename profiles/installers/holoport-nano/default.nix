@@ -11,6 +11,7 @@ in
     ../.
   ];
   
+  # use version of nixpkgs with latest patches
   nix.package = let
     nixpkgs-2009-latest = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/nixos-20.09.tar.gz) {};
   in nixpkgs-2009-latest.nix;
@@ -32,4 +33,3 @@ in
       -t 1
   '';
 }
-
