@@ -13,7 +13,7 @@ import toml
 import requests
 
 
-PROFILES_TOML_PATH = '/run/hpos-admin-features.toml'
+PROFILES_TOML_PATH = '/run/hpos-admin-api/hpos-admin-features.toml'
 
 
 app = Flask(__name__)
