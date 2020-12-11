@@ -33,7 +33,6 @@ in
       "d /run/hpos-admin-api 0770 admin-api apis - -"
       "z /run/.nix-channels 0664 root apis - -"
       "z /run/.nix-revision 0664 root apis - -"
-      "z /run/hpos-admin-features.toml 0664 root apis - -"
     ];
 
     users.users.admin-api = {

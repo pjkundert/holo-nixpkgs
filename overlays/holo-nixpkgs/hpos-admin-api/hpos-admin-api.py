@@ -166,12 +166,6 @@ def local_revision():
     return local_revision
 
 
-def zerotier_info():
-    proc = subprocess.run(['zerotier-cli', '-j', 'info'],
-                          capture_output=True, check=True)
-    return json.loads(proc.stdout)
-
-
 @app.route('/status', methods=['GET'])
 def status():
     return jsonify({
@@ -183,8 +177,7 @@ def status():
             'current_system': {
                 'rev': local_revision()
             }
-        },
-        'zerotier': zerotier_info()
+        }
     })
 
 
