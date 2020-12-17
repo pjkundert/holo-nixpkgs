@@ -10,12 +10,12 @@ rustPlatform.buildRustPackage {
     sha256 = "1xcg30wwnicmz8yaz8vgi0x7z0ygjq3kkdpzp9743swqik4c0g6z";
   };
 
+  cargoSha256 = "0c4fwzxnff46g8y247a6aqh805f195akn5nyp1xirsdrh3cjgalw";
+
   cargoBuildFlags = [
     "--manifest-path=crates/holochain/Cargo.toml"
     "--no-default-features"
   ];
-
-  cargoSha256 = "0c4fwzxnff46g8y247a6aqh805f195akn5nyp1xirsdrh3cjgalw";
 
   nativeBuildInputs = [ perl pkgconfig ];
 
