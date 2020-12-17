@@ -141,10 +141,10 @@ rec {
   );
 
   # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
-  holochain = callPackage ./holochain {
+  inherit (callPackage ./holochain {
     inherit (darwin.apple_sdk.frameworks) CoreServices Security;
     inherit (rust.packages.stable) rustPlatform;
-  };
+  }) mkHolochainBinary holochain;
 
   holoport-nano-dtb = callPackage ./holoport-nano-dtb {};
 
