@@ -126,7 +126,7 @@ rec {
     ${nodejs}/bin/node ${hc-state-node}/main.js "$@"
   '';
 
-  inherit (callPackage ./hc-state-node {}) hc-state-node; 
+  inherit (callPackage ./hc-state-node {}) hc-state-node;
 
   holo-cli = callPackage ./holo-cli {};
 
