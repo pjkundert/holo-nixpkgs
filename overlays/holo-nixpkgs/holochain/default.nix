@@ -41,9 +41,10 @@ rec {
   ]));
 
   holochain = mkHolochainBinary {
-    rev = "2c12ea38aaa659e8fb44d8d4d08abf4816491c6f";
-    sha256 = "1g44gvldf8mifxkjmxag8zs767nlm2qag8n9l4b95rcjn56injvx";
-    cargoSha256 = "0f4vp2j9lm1y82kshyajfbkmzssidin6v85kap3v1hvqf09yvnq0";
+    version = "2020-12-17";
+    rev = "6bd822cf3378178b5600ab79d8560f04b5a5b837";
+    sha256 = "1xcg30wwnicmz8yaz8vgi0x7z0ygjq3kkdpzp9743swqik4c0g6z";
+    cargoSha256 = "12nsp4xwfy0sa1v5wa4r8lskwpn1h5kr23qg5dvjlb20maxrp5dc";
     crate = "holochain";
   };
 }
