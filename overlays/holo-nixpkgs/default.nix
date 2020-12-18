@@ -140,7 +140,6 @@ rec {
     import "${holo-nixpkgs.path}/tests" { inherit pkgs; }
   );
 
-  # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
   inherit (callPackage ./holochain {
     inherit (darwin.apple_sdk.frameworks) CoreServices Security;
     inherit (rust.packages.stable) rustPlatform;
@@ -209,9 +208,8 @@ rec {
     }
   );
 
-  # holochain RSM requires version of rust matching holonix, which is set under rust.packages.holochain-rsm
   lair-keystore = callPackage ./lair-keystore {
-    inherit (rust.packages.holochain-rsm) rustPlatform;
+    inherit (rust.packages.stable) rustPlatform;
   };
 
   libsodium = previous.libsodium.overrideAttrs (
@@ -267,10 +265,6 @@ rec {
         };
 
         inherit (final.rust.packages.stable.rustPlatform) rust;
-      };
-
-      holochain-rsm = {
-        inherit (final.rust.packages.stable) rustPlatform;
       };
     };
   });
