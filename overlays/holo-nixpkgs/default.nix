@@ -145,6 +145,8 @@ rec {
     inherit (rust.packages.stable) rustPlatform;
   }) mkHolochainBinary holochain;
 
+  dna-util = mkHolochainBinary { crate = "dna_util"; };
+
   holoport-nano-dtb = callPackage ./holoport-nano-dtb {};
 
   inherit (callPackage ./host-console-ui {}) host-console-ui;
