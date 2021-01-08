@@ -62,7 +62,7 @@ in
 
   services.holo-auth-client.enable = lib.mkDefault true;
 
-  services.holo-envoy.enable = true;
+  services.holo-envoy.enable = lib.mkDefault true;
 
   services.holo-router-agent.enable = lib.mkDefault true;
 
