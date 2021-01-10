@@ -19,5 +19,11 @@ def request(ctx, method, path, **kwargs):
 def get_hosted_happs(ctx):
     print(request(ctx, 'GET', '/hosted_happs').json())
 
+@cli.command(help='Pass a happ_id to be installed as a hosted happ')
+@click.argument('happ_id')
+@click.pass_context
+def install_hosted_happ(ctx, happ_id):
+    print(request(ctx, 'POST', '/install_hosted_happ', params={'happ_id': happ_id}))
+
 if __name__ == '__main__':
     cli(obj={})

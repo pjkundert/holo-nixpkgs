@@ -14,15 +14,15 @@ makeTest {
       jq
     ];
 
-    /* services.hpos-holochain-api.enable = true; */
+    services.hpos-holochain-api.enable = true;
     services.holochain.config.enable = true;
 
-    /* services.nginx = {
+    services.nginx = {
       enable = true;
       virtualHosts.localhost = {
-        locations."/jack/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
+        locations."/tests/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
       };
-    }; */
+    };
 
     systemd.services.holochain.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
 
@@ -40,6 +40,17 @@ makeTest {
     machine.succeed("systemctl restart holochain.service")
     machine.wait_for_unit("holochain.service")
     machine.wait_for_open_port("42233")
+
+    machine.succeed("systemctl start hpos-holochain-api.service")
+    machine.wait_for_unit("hpos-holochain-api.service")
+
+    machine.wait_for_file("/run/hpos-holochain-api/hpos-holochain-api.sock")
+
+    installed_status = machine.succeed(
+        "hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ holohashinput"
+    ).strip()
+
+    print(installed_status)
 
     machine.shutdown()
   '';
