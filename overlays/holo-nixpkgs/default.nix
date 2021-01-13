@@ -120,6 +120,10 @@ rec {
     wormhole-relay = holo.buildProfile "wormhole-relay";
   };
 
+  configure-holochain = callPackage ./configure-holochain {
+    inherit (rust.packages.stable) rustPlatform;
+  };
+
   extlinux-conf-builder = callPackage ./extlinux-conf-builder {};
 
   hc-state = writeShellScriptBin "hc-state" ''
@@ -270,8 +274,6 @@ rec {
       };
     };
   });
-
-  inherit (callPackage ./self-hosted-happs {}) self-hosted-happs-node;
 
   inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
