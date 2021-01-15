@@ -57,11 +57,20 @@ makeTest {
 
     happ_id = list_of_happs[9:62]
     print("Happ ID to install: ", happ_id)
+    preferences = {
+        "max_fuel_before_invoice": 10,
+        "max_time_before_invoice": [86400, 0],
+        "price_compute": 0.5,
+        "price_storage": 1,
+        "price_bandwidth": 0.5,
+    }
+    print("With preferences: ", preferences)
     installed_status = machine.succeed(
-        f"hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ {happ_id}"
+        f"hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ {happ_id} 10 [86400,0] 0.5 1 0.5"
     ).strip()
+    print("Installed status: ", installed_status)
+    assert "200" in installed_status, "Failed to call /install_hosted_happ"
 
-    print("INSTALLED STATUS: ", installed_status)
     happs = machine.succeed("hc-state -d").strip()
     print(happs)
 
