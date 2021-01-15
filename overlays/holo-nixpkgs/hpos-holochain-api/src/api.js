@@ -4,41 +4,45 @@ import { downloadFile } from './utils';
 
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installHostedDna = async (happ_id, dna, agentPubKey) => {
-    console.log("Installing DNA...");
-    // TODO: How to install a DNA
+export const installHostedDna = async (happId, dna, agentPubKey) => {
+    console.log("Installing DNA...", dna);
+    // How to install a DNA
       // We need to download the DNA to a perticular location.
       // Use that location and install
-    // NOTE: we also have to install a servicelogger instance
+    // TODO NOTE: we also have to install a servicelogger instance
       // We need to know the path to the servicelogger
       // Use that servicelogger and install a new DNA with the properties set as
       // { properties: Array.from(msgpack.encode({"bound_dna_id":"uhC0kmrkoAHPVf_eufG7eC5fm6QKrW5pPMoktvG5LOC0SnJ4vV1Uv"})) }
 
     try {
-        const dnaPath = await downloadFile(dna.path);
+        console.log("Downloading DNA URL...");
+        let payloadDna = []
+        for(let i=0; i < dna.length; i++) {
+          const dnaPath = await downloadFile(dna[i].src_url);
+          payloadDna.push({
+                nick: dna[i].nick,
+                path: dnaPath
+          })
+        }
         // Install via admin interface
-        const installed_app_id = `${happ_id}:${dna.nick}`;
+        console.log("Connecting to admin port...");
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
-        const installed_app = await adminWebsocket.installApp({
+        const payload = {
             agent_key: agentPubKey,
-            installed_app_id,
-            dnas: [
-                {
-                    nick: dna.nick,
-                    path: dnaPath
-                }
-            ],
-        });
+            installed_app_id: happId,
+            dnas: payloadDna,
+        }
+        console.log("Installing happ: ", payload);
+        const installed_app = await adminWebsocket.installApp(payload);
+        console.log("Activate happ...", installed_app);
         await adminWebsocket.activateApp({ installed_app_id: installed_app.installed_app_id });
-
+        console.log(`Successfully installed dna ${happId} for key ${agentPubKey.toString('base64')}`);
     } catch(e) {
-        console.error(`Failed to install dna ${dna.nick} with error: `, e);
+        console.log(`Failed to install dna ${dna.nick} with error: `, e);
         throw new Error(`Failed to install dna ${dna.nick} with error: `, e);
     }
-
-    console.log(`Successfully installed dna ${installed_app_id} for key ${agentPubKey.toString('base64')}`);
 }
 
 export const createAgent = async () => {
@@ -83,37 +87,22 @@ export const startHappInterface = async () => {
     }
 }
 
-export const callZome = async (app_id, zome_name, fn_name, payload ) => {
-  // const appWebsocket = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
-  //
-  // const appInfo = appWebsocket.appInfo({ installed_app_id: app_id })
-  //
-  // if (!appInfo) {
-  //   throw new Error(`Couldn't find Holo Hosting App with id ${app_id}`)
-  // }
-  //
-  // const cellId = appInfo.cell_data[0][0]
-  //
-  // const agentKey = cellId[1]
-  //
-  // return await appWebsocket.callZome({
-  //   cell_id: cellId,
-  //   zome_name,
-  //   fn_name,
-  //   provenance: agentKey,
-  //   payload
-  // })
-  return {
-    happ_bundle : {
-      happ_alias: "alias",
-      dnas: [
-        {
-          hash: "",
-          path: "",
-          nick: ""
-        }
-      ],
-      ui_path: "UI_PATH"
-    }
+export const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
+  const appWebsocket = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
+
+  const appInfo = await appWebsocket.appInfo({ installed_app_id })
+
+  if (!appInfo) {
+    throw new Error(`Couldn't find Holo Hosting App with id ${installed_app_id}`)
   }
+  const cellId = appInfo.cell_data[0][0]
+  const agentKey = cellId[1]
+
+  return await appWebsocket.callZome({
+    cell_id: cellId,
+    zome_name,
+    fn_name,
+    provenance: agentKey,
+    payload
+  })
 }

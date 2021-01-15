@@ -11,32 +11,37 @@ if (!argv.appPort) {
   throw new Error('Host console server requires --app-port option.')
 }
 
-if (!argv.appId) {
-  throw new Error('Host console server requires --app-id option.')
-}
+// Search from the list of installed happs
+const CORE_ID = "core-happs:alpha0"
 
 app.get('/hosted_happs', async (_, res) => {
-  const happs = await callZome(argv.appId, 'hha', 'get_happs', {})
-
+  let happs
+  try {
+    happs = await callZome(CORE_ID, 'hha', 'get_happs', null)
+  } catch(e) {
+      console.log("error:", e);
+      res.sendStatus(501)
+  }
   const presentedHapps = happs.map(happ => ({
     id: happ.happ_id,
     name: happ.happ_bundle.name
   }))
-
   res.send(presentedHapps)
 })
 
 app.post('/install_hosted_happ', async (req, res) => {
   // check if happ_id is passed else return error
   if (req.query.happ_id) {
-    let happ_id = req.query.happ_id;
-    console.log("Trying to install happ with happ_id: ", happ_id)
+    let happId = req.query.happ_id;
+    console.log("Trying to install happ with happId: ", happId)
 
     // Steps:
     // - Call hha to get happ details
     let happBundleDetails;
+    let listOfInstalledHapps;
     try {
-      happBundleDetails = await callZome(argv.appId, 'hha', 'get_happ', {happ_id})
+      listOfInstalledHapps = await listInstalledApps();
+      happBundleDetails = await callZome(CORE_ID, 'hha', 'get_happ', happId)
     } catch (e) {
       res.sendStatus(500)
     }
@@ -52,22 +57,17 @@ app.post('/install_hosted_happ', async (req, res) => {
       // TODO: There should be only one hostedAgent for readonly instances
       const hostedAgentPubKey = await createAgent();
 
-      const installed = await listInstalledApps();
-
       // Install DNAs
       let dnas = happBundleDetails.happ_bundle.dnas;
-      // await dnas.forEach(async (dna) => {
-      for( let i=0; i< dnas.length; i++) {
-        // check if the hosted_happ is already installed
-        if (installed.includes(`${happBundleDetails.happ_id}:${dnas[i].nick}`)) {
-          console.log(`${happBundleDetails.happ_id}:${dnas[i].nick} already installed`)
-        } else {
-          await installHostedDna(happBundleDetails.happ_id, dnas[i], hostedAgentPubKey)
-        }
+
+      // check if the hosted_happ is already listOfInstalledHapps
+      if (listOfInstalledHapps.includes(`${happBundleDetails.happ_id}`)) {
+        console.log(`${happBundleDetails.happ_id}:${dnas[i].nick} already listOfInstalledHapps`)
+        res.sendStatus(501);
+      } else {
+        await installHostedDna(happBundleDetails.happ_id, dnas, hostedAgentPubKey)
       }
-
       // Note: Do not need to install UI's for hosted happ
-
       res.sendStatus(200);
     } catch (e) {
       console.log("Falied to install hosted happ")
@@ -75,7 +75,7 @@ app.post('/install_hosted_happ', async (req, res) => {
     }
   }
   else {
-    console.log("Falied: Please pass in a happ_id ")
+    console.log("Falied: Please pass in a happId ")
     res.sendStatus(501);
   }
 })

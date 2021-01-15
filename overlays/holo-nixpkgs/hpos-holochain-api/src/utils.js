@@ -6,6 +6,7 @@ import fs from "fs";
 // Download from url to tmp file
 // return tmp file path
 export const downloadFile = async (downloadUrl) => {
+    console.log("Downloading url: ", downloadUrl);
     const fileName = tmp.tmpNameSync();
     let file = fs.createWriteStream(fileName);
 

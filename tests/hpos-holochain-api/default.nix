@@ -43,17 +43,42 @@ makeTest {
 
     machine.succeed("systemctl start hpos-holochain-api.service")
     machine.wait_for_unit("hpos-holochain-api.service")
-
     machine.wait_for_file("/run/hpos-holochain-api/hpos-holochain-api.sock")
 
-    installed_status = machine.succeed(
-        "hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ holohashinput"
+    # TODO: find out why the test hangs when you wait for configure-holochain
+    # machine.wait_for_unit("configure-holochain.service")
+
+    happs = machine.succeed("hc-state -d").strip()
+    print(happs)
+
+    list_of_happs = machine.succeed(
+        "hpos-holochain-client --url=http://localhost/tests/ hosted-happs"
     ).strip()
 
-    print(installed_status)
+    happ_id = list_of_happs[9:62]
+    print("Happ ID to install: ", happ_id)
+    installed_status = machine.succeed(
+        f"hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ {happ_id}"
+    ).strip()
+
+    print("INSTALLED STATUS: ", installed_status)
+    happs = machine.succeed("hc-state -d").strip()
+    print(happs)
+
+    happsName = machine.succeed("hc-state -a").strip()
+    print(happsName)
 
     machine.shutdown()
   '';
 
   meta.platforms = [ "x86_64-linux" ];
 }
+/*
+
+    installed_status = machine.succeed(
+        "hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ holohashinput"
+    ).strip()
+
+    print("INSTALLED STATUS: ", installed_status)
+
+ */

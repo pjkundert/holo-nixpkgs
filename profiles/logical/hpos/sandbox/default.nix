@@ -4,6 +4,8 @@ with pkgs;
 
 let
   holochainWorkingDir = "/var/lib/holochain-rsm";
+
+  configureHolochainWorkingDir = "/var/lib/configure-holochain";
 in
 
 {
@@ -53,6 +55,34 @@ in
           }; */
         }];
       };
+    };
+  };
+
+  services.configure-holochain = {
+    enable = true;
+    working-directory = configureHolochainWorkingDir;
+    install-list = {
+      core_happs = [
+        {
+          app_id = "core-happs";
+          version = "alpha0";
+          dna_url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha5/holo-hosting-app.dna.gz"; # this version mismatch is on purpose for hash alteration
+        }
+        /* {
+          app_id = "servicelogger";
+          version = "alpha1";
+          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha19/elemental-chat.zip";
+          dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha13/elemental-chat.dna.gz"; # this version mismatch is on purpose for hash alteration
+        } */
+      ];
+      self_hosted_happs = [
+        /* {
+          app_id = "elemental-chat";
+          version = "alpha14";
+          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha19/elemental-chat.zip";
+          dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha13/elemental-chat.dna.gz"; # this version mismatch is on purpose for hash alteration
+        } */
+      ];
     };
   };
 
