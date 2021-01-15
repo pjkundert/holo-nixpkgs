@@ -38,9 +38,7 @@ app.post('/install_hosted_happ', async (req, res) => {
     // Steps:
     // - Call hha to get happ details
     let happBundleDetails;
-    let listOfInstalledHapps;
     try {
-      listOfInstalledHapps = await listInstalledApps();
       happBundleDetails = await callZome(CORE_ID, 'hha', 'get_happ', happId)
     } catch (e) {
       res.sendStatus(500)
@@ -48,10 +46,13 @@ app.post('/install_hosted_happ', async (req, res) => {
     console.log("Happ Bundle: ", happBundleDetails);
     let happAlias = happBundleDetails.happ_bundle.happ_alias;
 
+    let listOfInstalledHapps;
     // Instalation Process:
     try {
       // Make sure app interface is started
       await startHappInterface();
+
+      listOfInstalledHapps = await listInstalledApps();
 
       // Generate new agent
       // TODO: There should be only one hostedAgent for readonly instances

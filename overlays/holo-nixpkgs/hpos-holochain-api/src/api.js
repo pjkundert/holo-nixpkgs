@@ -1,6 +1,7 @@
-import { ADMIN_PORT, HOSTED_HAPP_PORT, HAPP_PORT } from "./const";
+import { ADMIN_PORT, HAPP_PORT } from "./const";
 import { AdminWebsocket, AppWebsocket } from "@holochain/conductor-api";
 import { downloadFile } from './utils';
+import * as msgpack from '@msgpack/msgpack';
 
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
@@ -37,12 +38,51 @@ export const installHostedDna = async (happId, dna, agentPubKey) => {
         console.log("Installing happ: ", payload);
         const installed_app = await adminWebsocket.installApp(payload);
         console.log("Activate happ...", installed_app);
+
+        // Install servicelogger instance
+        await installServicelogger(happId, adminWebsocket)
+
         await adminWebsocket.activateApp({ installed_app_id: installed_app.installed_app_id });
         console.log(`Successfully installed dna ${happId} for key ${agentPubKey.toString('base64')}`);
     } catch(e) {
         console.log(`Failed to install dna ${dna.nick} with error: `, e);
         throw new Error(`Failed to install dna ${dna.nick} with error: `, e);
     }
+}
+
+const installServicelogger = async (happId, adminWebsocket) => {
+  console.log(`Staring installation process of servicelogger for hosted happ {${happId}}`);
+  const appWebsocket = await AppWebsocket.connect(
+      `ws://localhost:${HAPP_PORT}`
+  );
+
+  const cell = await appWebsocket.appInfo({installed_app_id: "servicelogger:alpha0"})
+  const serviceloggerDnaHash = cell.cell_data[0][0][0]
+  const hostPubKey = cell.cell_data[0][0][1]
+
+  const installed_app_id = `${happId}::servicelogger`
+  console.log(`Registring ${installed_app_id}...`);
+
+  const registeredHash = await adminWebsocket.registerDna({
+    source: {
+      hash: serviceloggerDnaHash,
+    },
+    properties: Array.from(msgpack.encode({"bound_happ_id": happId}))
+  })
+
+  console.log(`Installing ${installed_app_id}...`)
+  const installed_app = await adminWebsocket.installApp({
+      agent_key: hostPubKey,
+      installed_app_id,
+      dnas: [{
+            nick: "servicelogger",
+            hash: registeredHash
+      }],
+  });
+
+  console.log(`Activating ${installed_app_id}...`)
+  await adminWebsocket.activateApp({ installed_app_id });
+  return
 }
 
 export const createAgent = async () => {
@@ -80,8 +120,8 @@ export const startHappInterface = async () => {
             `ws://localhost:${ADMIN_PORT}`
         );
 
-        console.log(`Starting app interface on port ${HOSTED_HAPP_PORT}`);
-        await adminWebsocket.attachAppInterface({ port: HOSTED_HAPP_PORT });
+        console.log(`Starting app interface on port ${HAPP_PORT}`);
+        await adminWebsocket.attachAppInterface({ port: HAPP_PORT });
     } catch(e) {
         console.log(`Error: ${e.message}, probably interface already started.`);
     }
