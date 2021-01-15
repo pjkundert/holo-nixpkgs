@@ -68,6 +68,8 @@ makeTest {
     happsName = machine.succeed("hc-state -a").strip()
     print(happsName)
 
+    assert happ_id in happsName, "happ does not seem to be installed"
+
     machine.shutdown()
   '';
 
