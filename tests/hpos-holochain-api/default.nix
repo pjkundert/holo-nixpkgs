@@ -68,7 +68,12 @@ makeTest {
     happsName = machine.succeed("hc-state -a").strip()
     print(happsName)
 
+    # check if happ with happId is installed
     assert happ_id in happsName, "happ does not seem to be installed"
+
+    # check if servicelogger instance for happId is installed
+    slId = happ_id + "::servicelogger"
+    assert slId in happsName, "happ does not seem to be installed"
 
     machine.shutdown()
   '';
