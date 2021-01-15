@@ -5,13 +5,10 @@ const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv
 const { UNIX_SOCKET, HHA_ID} = require('./const')
-import { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } from "./api"
+const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } = require("./api")
+const { parsePreferences } = require('./utils')
 
-if (!argv.appPort) {
-  throw new Error('Host console server requires --app-port option.')
-}
-
-// Search from the list of installed happs
+// TODO: Search from the list of installed happs
 const CORE_ID = "core-happs:alpha0"
 
 app.get('/hosted_happs', async (_, res) => {
@@ -19,7 +16,7 @@ app.get('/hosted_happs', async (_, res) => {
   try {
     happs = await callZome(CORE_ID, 'hha', 'get_happs', null)
   } catch(e) {
-      console.log("error:", e);
+      console.log("error from /hosted_happs:", e);
       res.sendStatus(501)
   }
   const presentedHapps = happs.map(happ => ({
@@ -29,10 +26,33 @@ app.get('/hosted_happs', async (_, res) => {
   res.send(presentedHapps)
 })
 
+// ??
 app.post('/install_hosted_happ', async (req, res) => {
+  let data
+  // Loading body
+  await req.on('data', (body) => {
+    data = JSON.parse(body.toString())
+  })
+
   // check if happ_id is passed else return error
-  if (req.query.happ_id) {
-    let happId = req.query.happ_id;
+  if (data.happ_id && data.preferences) {
+    let happId = data.happ_id;
+    // preferences: {
+    //   max_fuel_before_invoice: "5", // how much holofuel to accumulate before sending invoice
+    //   price_compute: "1",
+    //   price_storage: "1",
+    //   price_bandwidth: "1",
+    //   max_time_before_invoice: [86400, 0], // how much time to allow to pass before sending invoice even if fuel trigger not reached.
+    // }
+    let preferences = data.preferences;
+    if (!preferences.max_fuel_before_invoice
+      || !preferences.max_time_before_invoice
+      || !preferences.price_compute
+      || !preferences.price_storage
+      || !preferences.price_bandwidth) {
+        console.log("wrong preferences...");
+        return res.sendStatus(501)
+    }
     console.log("Trying to install happ with happId: ", happId)
 
     // Steps:
@@ -49,8 +69,8 @@ app.post('/install_hosted_happ', async (req, res) => {
     let listOfInstalledHapps;
     // Instalation Process:
     try {
-      // Make sure app interface is started
-      await startHappInterface();
+      // Do we need to make sure app interface is started?
+      // await startHappInterface();
 
       listOfInstalledHapps = await listInstalledApps();
 
@@ -66,7 +86,10 @@ app.post('/install_hosted_happ', async (req, res) => {
         console.log(`${happBundleDetails.happ_id}:${dnas[i].nick} already listOfInstalledHapps`)
         res.sendStatus(501);
       } else {
-        await installHostedDna(happBundleDetails.happ_id, dnas, hostedAgentPubKey)
+        const serviceloggerPref = parsePreferences(preferences, happBundleDetails.provider_pubkey)
+        console.log("Parsed Preferences: ", serviceloggerPref);
+
+        await installHostedDna(happBundleDetails.happ_id, dnas, hostedAgentPubKey, serviceloggerPref)
       }
       // Note: Do not need to install UI's for hosted happ
       res.sendStatus(200);

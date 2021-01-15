@@ -29,3 +29,15 @@ export const downloadFile = async (downloadUrl) => {
         })
     })
 }
+
+export const parsePreferences = (preferences, provider_pubkey) => {
+  const mtbi = JSON.parse(preferences.max_time_before_invoice)
+  return {
+    max_fuel_before_invoice: parseInt(preferences.max_fuel_before_invoice),
+    max_time_before_invoice: [parseInt(mtbi[0]), parseInt(mtbi[1])],
+    price_compute: parseInt(preferences.price_compute),
+    price_storage: parseInt(preferences.price_storage),
+    price_bandwidth: parseInt(preferences.price_bandwidth),
+    provider_pubkey
+  }
+}

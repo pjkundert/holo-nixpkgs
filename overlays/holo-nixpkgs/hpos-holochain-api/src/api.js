@@ -5,7 +5,7 @@ import * as msgpack from '@msgpack/msgpack';
 
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installHostedDna = async (happId, dna, agentPubKey) => {
+export const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => {
     console.log("Installing DNA...", dna);
     // How to install a DNA
       // We need to download the DNA to a perticular location.
@@ -40,7 +40,7 @@ export const installHostedDna = async (happId, dna, agentPubKey) => {
         console.log("Activate happ...", installed_app);
 
         // Install servicelogger instance
-        await installServicelogger(happId, adminWebsocket)
+        await installServicelogger(happId, serviceloggerPref, adminWebsocket)
 
         await adminWebsocket.activateApp({ installed_app_id: installed_app.installed_app_id });
         console.log(`Successfully installed dna ${happId} for key ${agentPubKey.toString('base64')}`);
@@ -50,7 +50,7 @@ export const installHostedDna = async (happId, dna, agentPubKey) => {
     }
 }
 
-const installServicelogger = async (happId, adminWebsocket) => {
+const installServicelogger = async (happId, preferences, adminWebsocket) => {
   console.log(`Staring installation process of servicelogger for hosted happ {${happId}}`);
   const appWebsocket = await AppWebsocket.connect(
       `ws://localhost:${HAPP_PORT}`
@@ -82,7 +82,7 @@ const installServicelogger = async (happId, adminWebsocket) => {
 
   console.log(`Activating ${installed_app_id}...`)
   await adminWebsocket.activateApp({ installed_app_id });
-  return
+  return await callZome(installed_app_id, "service", "set_logger_settings", preferences )
 }
 
 export const createAgent = async () => {
@@ -92,7 +92,6 @@ export const createAgent = async () => {
         );
 
         let agentPubKey = await adminWebsocket.generateAgentPubKey();
-        console.log(agentPubKey);
         console.log(`Generated new agent ${agentPubKey.toString('base64')}`);
         return agentPubKey;
     } catch(e) {
