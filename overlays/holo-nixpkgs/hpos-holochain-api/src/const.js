@@ -1,11 +1,20 @@
-export const UNIX_SOCKET = '/run/hpos-holochain-api/hpos-holochain-api.sock';
+const UNIX_SOCKET = process.env.NODE_ENV === 'test' ? 3001 : '/run/hpos-holochain-api/hpos-holochain-api.sock';
 
-export const HHA_ID = "holo-hosting-app";
+const HHA_ID = "holo-hosting-app";
 
-export const ADMIN_PORT = 4444;
+const ADMIN_PORT = 4444;
 
-export const SERVICE_LOGGER_PORT = 42222;
+const SERVICE_LOGGER_PORT = 42222;
 
-export const HAPP_PORT = 42233;
+const HAPP_PORT = 42233;
 
-export const HOSTED_HAPP_PORT = 42244;
+const HOSTED_HAPP_PORT = 42244;
+
+module.exports = {
+  UNIX_SOCKET,
+  HHA_ID,
+  ADMIN_PORT,
+  SERVICE_LOGGER_PORT,
+  HAPP_PORT,
+  HOSTED_HAPP_PORT,
+}

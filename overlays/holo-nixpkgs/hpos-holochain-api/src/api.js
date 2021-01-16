@@ -1,11 +1,11 @@
-import { ADMIN_PORT, HAPP_PORT } from "./const";
-import { AdminWebsocket, AppWebsocket } from "@holochain/conductor-api";
-import { downloadFile } from './utils';
-import * as msgpack from '@msgpack/msgpack';
+const { ADMIN_PORT, HAPP_PORT } = require("./const")
+const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
+const { downloadFile } = require('./utils')
+const msgpack = require('@msgpack/msgpack')
 
 // NOTE: this code assumes a single DNA per hApp.  This will need to be updated when the hApp bundle
 // spec is completed, and the hosted-happ config Yaml file will also need to be likewise updated
-export const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => {
+const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => {
     console.log("Installing DNA...", dna);
     // How to install a DNA
       // We need to download the DNA to a perticular location.
@@ -85,7 +85,7 @@ const installServicelogger = async (happId, preferences, adminWebsocket) => {
   return await callZome(installed_app_id, "service", "set_logger_settings", preferences )
 }
 
-export const createAgent = async () => {
+const createAgent = async () => {
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
@@ -99,7 +99,7 @@ export const createAgent = async () => {
     }
 }
 
-export const listInstalledApps = async () => {
+const listInstalledApps = async () => {
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
@@ -113,7 +113,7 @@ export const listInstalledApps = async () => {
     }
 }
 
-export const startHappInterface = async () => {
+const startHappInterface = async () => {
     try {
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
@@ -126,7 +126,8 @@ export const startHappInterface = async () => {
     }
 }
 
-export const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
+const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
+  console.log("PORT: ", HAPP_PORT);
   const appWebsocket = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
 
   const appInfo = await appWebsocket.appInfo({ installed_app_id })
@@ -136,7 +137,7 @@ export const callZome = async (installed_app_id, zome_name, fn_name, payload ) =
   }
   const cellId = appInfo.cell_data[0][0]
   const agentKey = cellId[1]
-
+  console.log("calling");
   return await appWebsocket.callZome({
     cell_id: cellId,
     zome_name,
@@ -144,4 +145,13 @@ export const callZome = async (installed_app_id, zome_name, fn_name, payload ) =
     provenance: agentKey,
     payload
   })
+}
+
+module.exports = {
+  callZome,
+  startHappInterface,
+  listInstalledApps,
+  createAgent,
+  installServicelogger,
+  installHostedDna
 }

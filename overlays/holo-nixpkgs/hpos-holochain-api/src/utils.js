@@ -1,11 +1,11 @@
-import tmp from "tmp";
-import request from "request";
-import url from "url";
-import fs from "fs";
+const tmp = require("tmp")
+const request = require("request")
+const url = require("url")
+const fs = require("fs")
 
 // Download from url to tmp file
 // return tmp file path
-export const downloadFile = async (downloadUrl) => {
+const downloadFile = async (downloadUrl) => {
     console.log("Downloading url: ", downloadUrl);
     const fileName = tmp.tmpNameSync();
     let file = fs.createWriteStream(fileName);
@@ -30,7 +30,7 @@ export const downloadFile = async (downloadUrl) => {
     })
 }
 
-export const parsePreferences = (preferences, provider_pubkey) => {
+const parsePreferences = (preferences, provider_pubkey) => {
   const mtbi = JSON.parse(preferences.max_time_before_invoice)
   return {
     max_fuel_before_invoice: parseInt(preferences.max_fuel_before_invoice),
@@ -40,4 +40,9 @@ export const parsePreferences = (preferences, provider_pubkey) => {
     price_bandwidth: parseInt(preferences.price_bandwidth),
     provider_pubkey
   }
+}
+
+module.exports = {
+  parsePreferences,
+  downloadFile
 }

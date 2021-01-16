@@ -103,7 +103,7 @@ app.post('/install_hosted_happ', async (req, res) => {
     res.sendStatus(501);
   }
 })
-
+console.log(">>>>>", process.env.NODE_ENV);
 try {
   if (fs.existsSync(UNIX_SOCKET)) {
     fs.unlinkSync(UNIX_SOCKET)
@@ -115,3 +115,5 @@ try {
 app.listen(UNIX_SOCKET, () => {
   console.log(`Host console server running`)
 })
+
+module.exports = {app}
