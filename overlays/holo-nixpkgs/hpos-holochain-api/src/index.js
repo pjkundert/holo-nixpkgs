@@ -7,16 +7,12 @@ const argv = yargs(hideBin(process.argv)).argv
 const { UNIX_SOCKET } = require('./const')
 const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } = require("./api")
 const { parsePreferences } = require('./utils')
-
-// TODO: Search from the list of installed happs
-const CORE_ID = "core-happs:alpha0"
+const { CORE_ID } = require('./const')
 
 app.get('/hosted_happs', async (_, res) => {
   let happs
   try {
-    console.log("CAlling happ lists");
     happs = await callZome(CORE_ID, 'hha', 'get_happs', null)
-    console.log("Got happ lists: ", happs);
   } catch(e) {
       console.log("error from /hosted_happs:", e);
       res.sendStatus(501)

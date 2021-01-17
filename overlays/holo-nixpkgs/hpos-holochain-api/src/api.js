@@ -1,4 +1,4 @@
-const { ADMIN_PORT, HAPP_PORT } = require("./const")
+const { ADMIN_PORT, HAPP_PORT, SERVICELOGGER_ID } = require("./const")
 const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 const { downloadFile } = require('./utils')
 const msgpack = require('@msgpack/msgpack')
@@ -10,7 +10,7 @@ const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => 
     // How to install a DNA
       // We need to download the DNA to a perticular location.
       // Use that location and install
-    // TODO NOTE: we also have to install a servicelogger instance
+    // NOTE: we also have to install a servicelogger instance
       // We need to know the path to the servicelogger
       // Use that servicelogger and install a new DNA with the properties set as
       // { properties: Array.from(msgpack.encode({"bound_dna_id":"uhC0kmrkoAHPVf_eufG7eC5fm6QKrW5pPMoktvG5LOC0SnJ4vV1Uv"})) }
@@ -59,7 +59,7 @@ const installServicelogger = async (happId, preferences, adminWebsocket) => {
       `ws://localhost:${HAPP_PORT}`
   );
   // TODO: Get servicelogger appID
-  const cell = await appWebsocket.appInfo({installed_app_id: "servicelogger:alpha0"})
+  const cell = await appWebsocket.appInfo({installed_app_id: SERVICELOGGER_ID})
   const serviceloggerDnaHash = cell.cell_data[0][0][0]
   const hostPubKey = cell.cell_data[0][0][1]
 
