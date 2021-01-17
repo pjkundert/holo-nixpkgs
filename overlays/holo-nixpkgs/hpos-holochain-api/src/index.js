@@ -4,7 +4,7 @@ const app = express()
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv
-const { UNIX_SOCKET, HHA_ID} = require('./const')
+const { UNIX_SOCKET } = require('./const')
 const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } = require("./api")
 const { parsePreferences } = require('./utils')
 
@@ -14,7 +14,9 @@ const CORE_ID = "core-happs:alpha0"
 app.get('/hosted_happs', async (_, res) => {
   let happs
   try {
+    console.log("CAlling happ lists");
     happs = await callZome(CORE_ID, 'hha', 'get_happs', null)
+    console.log("Got happ lists: ", happs);
   } catch(e) {
       console.log("error from /hosted_happs:", e);
       res.sendStatus(501)

@@ -55,7 +55,7 @@ const installServicelogger = async (happId, preferences, adminWebsocket) => {
   const appWebsocket = await AppWebsocket.connect(
       `ws://localhost:${HAPP_PORT}`
   );
-
+  // TODO: Get servicelogger appID
   const cell = await appWebsocket.appInfo({installed_app_id: "servicelogger:alpha0"})
   const serviceloggerDnaHash = cell.cell_data[0][0][0]
   const hostPubKey = cell.cell_data[0][0][1]
@@ -127,7 +127,6 @@ const startHappInterface = async () => {
 }
 
 const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
-  console.log("PORT: ", HAPP_PORT);
   const appWebsocket = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
 
   const appInfo = await appWebsocket.appInfo({ installed_app_id })
@@ -137,7 +136,6 @@ const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
   }
   const cellId = appInfo.cell_data[0][0]
   const agentKey = cellId[1]
-  console.log("calling");
   return await appWebsocket.callZome({
     cell_id: cellId,
     zome_name,
