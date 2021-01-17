@@ -16,20 +16,23 @@ const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => 
       // { properties: Array.from(msgpack.encode({"bound_dna_id":"uhC0kmrkoAHPVf_eufG7eC5fm6QKrW5pPMoktvG5LOC0SnJ4vV1Uv"})) }
 
     try {
-        console.log("Downloading DNA URL...");
-        let payloadDna = []
-        for(let i=0; i < dna.length; i++) {
-          const dnaPath = await downloadFile(dna[i].src_url);
-          payloadDna.push({
-                nick: dna[i].nick,
-                path: dnaPath
-          })
-        }
         // Install via admin interface
         console.log("Connecting to admin port...");
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
+        console.log("Downloading DNA URL...");
+        let payloadDna = []
+        for(let i=0; i < dna.length; i++) {
+          const dnaPath = await downloadFile(dna[i].src_url);
+          const registeredHash = await adminWebsocket.registerDna({
+            source: { path: dnaPath }
+          })
+          payloadDna.push({
+                nick: dna[i].nick,
+                hash: registeredHash
+          })
+        }
         const payload = {
             agent_key: agentPubKey,
             installed_app_id: happId,
