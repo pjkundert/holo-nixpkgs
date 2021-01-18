@@ -7,7 +7,7 @@
     "test": "jest --forceExit",
     "build": "webpack --config webpack.config.cjs",
     "fetch-dnas": "sh ./scripts/fetch-dna.sh",
-    "holochain": "holochain-run-dna -c ./config.yml -a 4444"
+    "holochain": "holochain-run-dna -c ./tests/config.yml -a 4444"
   },
   "author": "robbie.carlton@holo.host",
   "license": "ISC",
