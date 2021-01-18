@@ -7,10 +7,13 @@ The hpos-holochina-api is an express server that expose endpoints that interact 
 ### 1. `GET /hosted_happs`
 **Response Body:**
 ```json
-{
+  [{
     "id": "uhCkkyw_BVJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
     "name": "Elemental Chat"
-}
+  },{
+    "id": "uhCkkyw_BVJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
+    "name": "Elemental Chat"
+  }]
 ```
 
 ### 2. `POST /install_hosted_happ`
