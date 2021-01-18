@@ -16,4 +16,4 @@ test('Test holochain-api endpoint ', async () => {
             .post('/install_hosted_happ')
             .send({ happ_id: listOfHapps.body[0].id, preferences });
     expect(res.status).toBe(200);
-});
+}, 30000);
