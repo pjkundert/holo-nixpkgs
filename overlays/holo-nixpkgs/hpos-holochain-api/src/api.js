@@ -1,4 +1,4 @@
-const { ADMIN_PORT, HAPP_PORT, SERVICELOGGER_ID } = require("./const")
+const { ADMIN_PORT, HAPP_PORT, getAppIds } = require("./const")
 const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 const { downloadFile } = require('./utils')
 const msgpack = require('@msgpack/msgpack')
@@ -59,7 +59,8 @@ const installServicelogger = async (happId, preferences, adminWebsocket) => {
       `ws://localhost:${HAPP_PORT}`
   );
   // TODO: Get servicelogger appID
-  const cell = await appWebsocket.appInfo({installed_app_id: SERVICELOGGER_ID})
+  const APP_ID = await getAppIds()
+  const cell = await appWebsocket.appInfo({installed_app_id: APP_ID.SL})
   const serviceloggerDnaHash = cell.cell_data[0][0][0]
   const hostPubKey = cell.cell_data[0][0][1]
 

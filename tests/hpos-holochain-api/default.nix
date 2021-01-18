@@ -54,7 +54,7 @@ makeTest {
     list_of_happs = machine.succeed(
         "hpos-holochain-client --url=http://localhost/tests/ hosted-happs"
     ).strip()
-
+    print(list_of_happs)
     happ_id = list_of_happs[9:62]
     print("Happ ID to install: ", happ_id)
     preferences = {

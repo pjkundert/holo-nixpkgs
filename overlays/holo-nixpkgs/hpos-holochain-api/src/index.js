@@ -7,12 +7,13 @@ const argv = yargs(hideBin(process.argv)).argv
 const { UNIX_SOCKET } = require('./const')
 const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } = require("./api")
 const { parsePreferences } = require('./utils')
-const { CORE_ID } = require('./const')
+const { getAppIds, getReadOnlyPubKey} = require('./const')
 
 app.get('/hosted_happs', async (_, res) => {
   let happs
   try {
-    happs = await callZome(CORE_ID, 'hha', 'get_happs', null)
+    const APP_ID = await getAppIds()
+    happs = await callZome(APP_ID.HHA, 'hha', 'get_happs', null)
   } catch(e) {
       console.log("error from /hosted_happs:", e);
       res.sendStatus(501)
@@ -57,7 +58,8 @@ app.post('/install_hosted_happ', async (req, res) => {
     // - Call hha to get happ details
     let happBundleDetails;
     try {
-      happBundleDetails = await callZome(CORE_ID, 'hha', 'get_happ', happId)
+      const APP_ID = await getAppIds()
+      happBundleDetails = await callZome(APP_ID.HHA, 'hha', 'get_happ', happId)
     } catch (e) {
       res.sendStatus(500)
     }
@@ -72,9 +74,8 @@ app.post('/install_hosted_happ', async (req, res) => {
 
       listOfInstalledHapps = await listInstalledApps();
 
-      // Generate new agent
-      // TODO: There should be only one hostedAgent for readonly instances
-      const hostedAgentPubKey = await createAgent();
+      // Generate new agent in a test environment else read the location in hpos
+      const hostPubKey = process.env.NODE_ENV === 'test' ? await createAgent() : await getReadOnlyPubKey();
 
       // Install DNAs
       let dnas = happBundleDetails.happ_bundle.dnas;
@@ -87,7 +88,7 @@ app.post('/install_hosted_happ', async (req, res) => {
         const serviceloggerPref = parsePreferences(preferences, happBundleDetails.provider_pubkey)
         console.log("Parsed Preferences: ", serviceloggerPref);
 
-        await installHostedDna(happBundleDetails.happ_id, dnas, hostedAgentPubKey, serviceloggerPref)
+        await installHostedDna(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
       }
       // Note: Do not need to install UI's for hosted happ
       res.sendStatus(200);

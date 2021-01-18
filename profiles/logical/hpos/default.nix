@@ -166,7 +166,7 @@ in
     '';
   };
 
-  services.holochain = {
+  services.holochain = lib.mkDefault {
     enable = true;
     working-directory = holochainWorkingDir;
     config = {
@@ -197,7 +197,7 @@ in
     };
   };
 
-  services.configure-holochain = {
+  services.configure-holochain = lib.mkDefault {
     enable = true;
     working-directory = configureHolochainWorkingDir;
     install-list = {
