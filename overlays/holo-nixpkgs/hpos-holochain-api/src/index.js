@@ -18,10 +18,23 @@ app.get('/hosted_happs', async (_, res) => {
       console.log("error from /hosted_happs:", e);
       res.sendStatus(501)
   }
-  const presentedHapps = happs.map(happ => ({
-    id: happ.happ_id,
-    name: happ.happ_bundle.name
-  }))
+  const presentedHapps = []
+  for(let i=0; i < happs.length; i++) {
+    let enabled, source_chain;
+    try{
+      source_chain = await callZome(`${happs[i].happ_id}::servicelogger`, 'service', 'get_source_chain_count', null)
+      enabled = true
+    } catch(e) {
+      enabled = false
+      source_chain = 0
+    }
+    presentedHapps.push({
+        id: happs[i].happ_id,
+        name: happs[i].happ_bundle.name,
+        enabled,
+        source_chain
+    })
+  }
   res.send(presentedHapps)
 })
 
