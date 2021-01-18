@@ -30,16 +30,21 @@ const downloadFile = async (downloadUrl) => {
     })
 }
 
-const parsePreferences = (preferences, provider_pubkey) => {
-  const mtbi = JSON.parse(preferences.max_time_before_invoice)
+const parsePreferences = (p, key) => {
+  const mtbi = typeof p.max_time_before_invoice == "string" ? JSON.parse(p.max_time_before_invoice) :p.max_time_before_invoice
   return {
-    max_fuel_before_invoice: parseInt(preferences.max_fuel_before_invoice),
-    max_time_before_invoice: [parseInt(mtbi[0]), parseInt(mtbi[1])],
-    price_compute: parseInt(preferences.price_compute),
-    price_storage: parseInt(preferences.price_storage),
-    price_bandwidth: parseInt(preferences.price_bandwidth),
-    provider_pubkey
+    max_fuel_before_invoice: toInt(p.max_fuel_before_invoice),
+    max_time_before_invoice: [toInt(mtbi[0]), toInt(mtbi[1])],
+    price_compute: toInt(p.price_compute),
+    price_storage: toInt(p.price_storage),
+    price_bandwidth: toInt(p.price_bandwidth),
+    provider_pubkey: key
   }
+}
+
+const toInt = (i) => {
+  if (typeof i == "string") return parseInt(i)
+  else return i
 }
 
 module.exports = {

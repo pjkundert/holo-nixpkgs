@@ -1,4 +1,4 @@
-const { ADMIN_PORT, HAPP_PORT } = require("./const")
+const { ADMIN_PORT, HAPP_PORT, getAppIds } = require("./const")
 const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 const { downloadFile } = require('./utils')
 const msgpack = require('@msgpack/msgpack')
@@ -10,26 +10,29 @@ const installHostedDna = async (happId, dna, agentPubKey, serviceloggerPref) => 
     // How to install a DNA
       // We need to download the DNA to a perticular location.
       // Use that location and install
-    // TODO NOTE: we also have to install a servicelogger instance
+    // NOTE: we also have to install a servicelogger instance
       // We need to know the path to the servicelogger
       // Use that servicelogger and install a new DNA with the properties set as
       // { properties: Array.from(msgpack.encode({"bound_dna_id":"uhC0kmrkoAHPVf_eufG7eC5fm6QKrW5pPMoktvG5LOC0SnJ4vV1Uv"})) }
 
     try {
-        console.log("Downloading DNA URL...");
-        let payloadDna = []
-        for(let i=0; i < dna.length; i++) {
-          const dnaPath = await downloadFile(dna[i].src_url);
-          payloadDna.push({
-                nick: dna[i].nick,
-                path: dnaPath
-          })
-        }
         // Install via admin interface
         console.log("Connecting to admin port...");
         const adminWebsocket = await AdminWebsocket.connect(
             `ws://localhost:${ADMIN_PORT}`
         );
+        console.log("Downloading DNA URL...");
+        let payloadDna = []
+        for(let i=0; i < dna.length; i++) {
+          const dnaPath = await downloadFile(dna[i].src_url);
+          const registeredHash = await adminWebsocket.registerDna({
+            source: { path: dnaPath }
+          })
+          payloadDna.push({
+                nick: dna[i].nick,
+                hash: registeredHash
+          })
+        }
         const payload = {
             agent_key: agentPubKey,
             installed_app_id: happId,
@@ -55,8 +58,9 @@ const installServicelogger = async (happId, preferences, adminWebsocket) => {
   const appWebsocket = await AppWebsocket.connect(
       `ws://localhost:${HAPP_PORT}`
   );
-
-  const cell = await appWebsocket.appInfo({installed_app_id: "servicelogger:alpha0"})
+  // TODO: Get servicelogger appID
+  const APP_ID = await getAppIds()
+  const cell = await appWebsocket.appInfo({installed_app_id: APP_ID.SL})
   const serviceloggerDnaHash = cell.cell_data[0][0][0]
   const hostPubKey = cell.cell_data[0][0][1]
 
@@ -127,7 +131,6 @@ const startHappInterface = async () => {
 }
 
 const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
-  console.log("PORT: ", HAPP_PORT);
   const appWebsocket = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
 
   const appInfo = await appWebsocket.appInfo({ installed_app_id })
@@ -137,7 +140,6 @@ const callZome = async (installed_app_id, zome_name, fn_name, payload ) => {
   }
   const cellId = appInfo.cell_data[0][0]
   const agentKey = cellId[1]
-  console.log("calling");
   return await appWebsocket.callZome({
     cell_id: cellId,
     zome_name,
