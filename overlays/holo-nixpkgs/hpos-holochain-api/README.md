@@ -17,7 +17,7 @@ The hpos-holochina-api is an express server that exposes endpoints that interact
 ```
 
 ### 2. `POST /install_hosted_happ`
-This endpoint is calling to install/enable a hosted happ by passing the happ_id and preferences to set up the servicelogger instance
+This endpoint is called to install/enable a hosted happ by passing the happ_id and preferences to set up the servicelogger instance
 
 **Request Body**
 ```json
