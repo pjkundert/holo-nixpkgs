@@ -22,4 +22,4 @@ test('Test holochain-api endpoint ', async () => {
     expect(listOfHappsReload.status).toBe(200);
     expect(listOfHappsReload.body[0].enabled).toBe(true);
     expect(listOfHappsReload.body[0].source_chain).toBe(0)
-});
+}, 30000);

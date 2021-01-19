@@ -7,8 +7,7 @@ makeTest {
     imports = [ (import "${hpos.logical}/sandbox") ];
 
     environment.systemPackages = [
-      # holo-cli
-      hpos-config # TODO: now inside hpos-config package
+      hpos-config
       jq
     ];
 
