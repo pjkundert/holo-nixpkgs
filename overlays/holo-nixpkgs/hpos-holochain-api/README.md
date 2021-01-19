@@ -48,6 +48,6 @@ This endpoint is calling to install/enable a hosted happ by passing the happ_id 
 
     Use `nix-build tests` to run tests in sandbox.
 
-    **Note:** The `/install_hosted_happ` endpoint cannot be tested in sandbox. So see that you turn off sandbox mode when testing it.
+    **Note:** The `/install_hosted_happ` endpoint cannot be tested in sandbox because it requires internet access. So see that you turn off sandbox mode when testing it.
     To turn off sandbox mode use the following command
     `nix-build tests --no-sandbox`
