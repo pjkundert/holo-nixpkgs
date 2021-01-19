@@ -10,7 +10,7 @@ makeTest {
 
     environment.systemPackages = [
       hpos-holochain-client
-      hpos-config  # TODO: now inside hpos-config package
+      hpos-config
       jq
     ];
 
