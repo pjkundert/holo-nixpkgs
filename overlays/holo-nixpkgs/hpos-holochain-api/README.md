@@ -1,6 +1,6 @@
 # hpos-holochain-api
 
-The hpos-holochina-api is an express server that expose endpoints that interact with holochain(i.e conductor) that is running in hpos.
+The hpos-holochina-api is an express server that exposes endpoints that interact with holochain(i.e conductor) that is running in hpos.
 
 ## Exposed Endpoints
 
