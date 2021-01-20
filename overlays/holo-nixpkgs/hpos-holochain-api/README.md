@@ -14,7 +14,7 @@ The hpos-holochina-api is an express server that expose endpoints that interact 
     "source_chain": 3
   },{
     "id": "uhCkkyw_FSJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
-    "name": "Holofuel Chat",
+    "name": "Holofuel",
     "enabled": "false",
     "source_chain": 0
   }]
