@@ -15,7 +15,6 @@ makeTest {
     ];
 
     services.hpos-holochain-api.enable = true;
-    services.holochain.config.enable = true;
 
     services.nginx = {
       enable = true;
