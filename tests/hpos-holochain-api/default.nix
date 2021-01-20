@@ -45,7 +45,7 @@ makeTest {
     machine.wait_for_file("/run/hpos-holochain-api/hpos-holochain-api.sock")
 
     # TODO: find out why the test hangs when you wait for configure-holochain
-    # machine.wait_for_unit("configure-holochain.service")
+    machine.wait_for_unit("configure-holochain.service")
 
     happs = machine.succeed("hc-state -d").strip()
     print(happs)
