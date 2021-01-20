@@ -59,7 +59,6 @@ makeTest {
     ), "Failed to Get the list of hosted happs from hha"
     print(list_of_happs)
 
-    """
     # The following tests only pass in a non sandbox environment
     happ_id = list_of_happs[9:62]
     print("Happ ID to install: ", happ_id)
@@ -89,7 +88,6 @@ makeTest {
     # check if servicelogger instance for happId is installed
     slId = happ_id + "::servicelogger"
     assert slId in happsName, "happ does not seem to be installed"
-    """
     machine.shutdown()
   '';
 

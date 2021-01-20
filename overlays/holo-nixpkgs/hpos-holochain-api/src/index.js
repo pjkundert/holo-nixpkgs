@@ -4,28 +4,42 @@ const app = express()
 const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv
-const { UNIX_SOCKET } = require('./const')
-const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedDna } = require("./api")
+const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
+const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedHapp } = require("./api")
 const { parsePreferences } = require('./utils')
 const { getAppIds, getReadOnlyPubKey} = require('./const')
+const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 
 app.get('/hosted_happs', async (_, res) => {
   let happs
+  const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`);
   try {
     const APP_ID = await getAppIds()
-    happs = await callZome(APP_ID.HHA, 'hha', 'get_happs', null)
+    happs = await callZome(appWs, APP_ID.HHA, 'hha', 'get_happs', null)
   } catch(e) {
       console.log("error from /hosted_happs:", e);
-      res.sendStatus(501)
+      return res.status(501).send(`hpos-holochain-api error: ${e}`);
   }
-  const presentedHapps = happs.map(happ => ({
-    id: happ.happ_id,
-    name: happ.happ_bundle.name
-  }))
-  res.send(presentedHapps)
+  const presentedHapps = []
+  for(let i=0; i < happs.length; i++) {
+    let enabled, source_chain;
+    try{
+      source_chain = await callZome(appWs,`${happs[i].happ_id}::servicelogger`, 'service', 'get_source_chain_count', null)
+      enabled = true
+    } catch(e) {
+      enabled = false
+      source_chain = 0
+    }
+    presentedHapps.push({
+        id: happs[i].happ_id,
+        name: happs[i].happ_bundle.name,
+        enabled,
+        source_chain
+    })
+  }
+  res.status(200).send(presentedHapps)
 })
 
-// ??
 app.post('/install_hosted_happ', async (req, res) => {
   let data
   // Loading body
@@ -50,7 +64,7 @@ app.post('/install_hosted_happ', async (req, res) => {
       || !preferences.price_storage
       || !preferences.price_bandwidth) {
         console.log("wrong preferences...");
-        return res.sendStatus(501)
+        return res.status(501).send(`hpos-holochain-api error: preferences does not include all the necessary values`);
     }
     console.log("Trying to install happ with happId: ", happId)
 
@@ -59,9 +73,11 @@ app.post('/install_hosted_happ', async (req, res) => {
     let happBundleDetails;
     try {
       const APP_ID = await getAppIds()
-      happBundleDetails = await callZome(APP_ID.HHA, 'hha', 'get_happ', happId)
+      const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`);
+      happBundleDetails = await callZome(appWs, APP_ID.HHA, 'hha', 'get_happ', happId)
+
     } catch (e) {
-      res.sendStatus(500)
+      return res.status(501).send(`hpos-holochain-api error: ${e}`);
     }
     console.log("Happ Bundle: ", happBundleDetails);
     let happAlias = happBundleDetails.happ_bundle.happ_alias;
@@ -69,37 +85,34 @@ app.post('/install_hosted_happ', async (req, res) => {
     let listOfInstalledHapps;
     // Instalation Process:
     try {
+      const adminWs = await AdminWebsocket.connect(`ws://localhost:${ADMIN_PORT}`);
       // Do we need to make sure app interface is started?
-      // await startHappInterface();
+      // await startHappInterface(adminWs);
 
-      listOfInstalledHapps = await listInstalledApps();
+      listOfInstalledHapps = await listInstalledApps(adminWs);
 
       // Generate new agent in a test environment else read the location in hpos
-      const hostPubKey = process.env.NODE_ENV === 'test' ? await createAgent() : await getReadOnlyPubKey();
+      const hostPubKey = process.env.NODE_ENV === 'test' ? await createAgent(adminWs) : await getReadOnlyPubKey();
 
       // Install DNAs
       let dnas = happBundleDetails.happ_bundle.dnas;
 
       // check if the hosted_happ is already listOfInstalledHapps
       if (listOfInstalledHapps.includes(`${happBundleDetails.happ_id}`)) {
-        console.log(`${happBundleDetails.happ_id}:${dnas[i].nick} already listOfInstalledHapps`)
-        res.sendStatus(501);
+        return res.status(501).send(`hpos-holochain-api error: ${happBundleDetails.happ_id} already installed on your holoport`);
       } else {
         const serviceloggerPref = parsePreferences(preferences, happBundleDetails.provider_pubkey)
         console.log("Parsed Preferences: ", serviceloggerPref);
-
-        await installHostedDna(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
+        await installHostedHapp(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
       }
       // Note: Do not need to install UI's for hosted happ
-      res.sendStatus(200);
+      return res.status(200).send(`Successfully installed happ_id: ${happId}`);
     } catch (e) {
-      console.log("Falied to install hosted happ")
-      res.sendStatus(501);
+      return res.status(501).send(`hpos-holochain-api error: Failed to install hosted Happ with error - ${e}`);
     }
   }
   else {
-    console.log("Falied: Please pass in a happId ")
-    res.sendStatus(501);
+  return res.status(501).send(`hpos-holochain-api error: Failed to pass happId in body`);
   }
 })
 
