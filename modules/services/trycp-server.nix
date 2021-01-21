@@ -22,7 +22,7 @@ in
 
       environment.RUST_LOG = "info";
 
-      serviceConfig.ExecStart = "${cfg.package}/bin/trycp_server -- -r 9100-9400";
+      serviceConfig.ExecStart = "${cfg.package}/bin/trycp_server -r 9100-9400";
     };
   };
 }
