@@ -278,6 +278,10 @@ rec {
 
   inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
+  tryorama = callPackage ./tryorama {
+    inherit (rust.packages.stable) rustPlatform;
+  };
+  
   wrangler = callPackage ./wrangler {};
 
   zerotierone = previous.zerotierone.overrideAttrs (

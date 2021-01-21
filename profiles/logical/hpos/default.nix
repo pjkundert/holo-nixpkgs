@@ -151,6 +151,11 @@ in
           proxyPass = "http://127.0.0.1:4656";
           proxyWebsockets = true;   # TODO: add proxy_send_timeout, proxy_read_timeout HERE
         };
+
+         "/trycp/" = {
+          proxyPass = "http://127.0.0.1:9000";
+          proxyWebsockets = true; 
+        };
       };
     };
 
