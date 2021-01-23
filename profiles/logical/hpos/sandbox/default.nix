@@ -55,6 +55,7 @@ in
       core_happs = [
         {
           app_id = "core-happs";
+          uuid = "0001";
           version = "alpha0";
           /* dna_url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha6/holo-hosting-app.dna.gz"; */
           dna_path = builtins.fetchurl {
@@ -64,6 +65,7 @@ in
         }
         {
           app_id = "servicelogger";
+          uuid = "0001";
           version = "alpha0";
           /* dna_url = "https://holo-host.github.io/servicelogger-rsm/releases/downloads/v0.0.1-alpha4/servicelogger.dna.gz"; */
           dna_path = builtins.fetchurl {
@@ -75,9 +77,10 @@ in
       self_hosted_happs = [
         /* {
           app_id = "elemental-chat";
+          uuid = "0666";
           version = "alpha14";
-          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha19/elemental-chat.zip";
-          dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha13/elemental-chat.dna.gz";
+          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha20/elemental-chat.zip";
+          dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha14/elemental-chat.dna.gz";
           } */
       ];
     };
