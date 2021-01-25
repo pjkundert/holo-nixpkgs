@@ -36,8 +36,8 @@ makeTest {
     machine.succeed(
         "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos-config.json"
     )
-    machine.succeed("systemctl restart holochain.service")
     machine.wait_for_unit("holochain.service")
+    machine.wait_for_open_port("4444")
     machine.wait_for_open_port("42233")
 
     machine.succeed("systemctl start hpos-holochain-api.service")
