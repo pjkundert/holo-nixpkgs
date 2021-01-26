@@ -1,5 +1,5 @@
 const yaml = require('js-yaml');
-const fs   = require('fs');
+const fs = require('fs');
 
 const UNIX_SOCKET = process.env.NODE_ENV === 'test' ? 8800 : '/run/hpos-holochain-api/hpos-holochain-api.sock';
 
@@ -25,11 +25,15 @@ const getAppIds = async () => {
     let config = await yaml.load(fs.readFileSync(CONFIGURE_HC, 'utf8'))
     const getId = (id) => {
       let app = config.core_happs.find(h => h.app_id == id)
-      return `${id}:${app.version}`
+      if (app.uuid === undefined) {
+        return `${id}:${app.version}`
+      } else {
+        return `${id}:${app.version}:${app.uuid}`
+      }
     }
     if (process.env.NODE_ENV === 'test') return {
-        HHA: config[0].app_name,
-        SL: config[1].app_name
+      HHA: config[0].app_name,
+      SL: config[1].app_name
     }
     else return {
       HHA: getId('core-happs'),

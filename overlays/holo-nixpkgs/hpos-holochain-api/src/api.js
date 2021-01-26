@@ -46,7 +46,7 @@ const installHostedHapp = async (happId, dna, agentPubKey, serviceloggerPref) =>
         await installServicelogger(adminWebsocket, happId, serviceloggerPref)
 
         await adminWebsocket.activateApp({ installed_app_id: installed_app.installed_app_id });
-        console.log(`Successfully installed dna ${happId} for key ${agentPubKey.toString('base64')}`);
+        console.log(`Successfully installed ${happId} (read-only instance and service logger) for key ${agentPubKey.toString('base64')}`);
     } catch(e) {
         console.log(`Failed to install dna ${dna.nick} with error: `, e);
         throw new Error(`Failed to install dna ${dna.nick} with error: `, e);
