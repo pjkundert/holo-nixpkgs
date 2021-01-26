@@ -11,8 +11,6 @@ let
 in
 
 {
-  # TODO: fix/port/review these
-  # holochain = callPackage ./holochain {};
   hpos-admin-api = callPackage ./hpos-admin-api {};
   hpos-holochain-api = callPackage ./hpos-holochain-api {};
 }
