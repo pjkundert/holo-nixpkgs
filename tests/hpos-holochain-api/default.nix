@@ -38,13 +38,12 @@ makeTest {
     )
     machine.wait_for_unit("holochain.service")
     machine.wait_for_open_port("4444")
-    machine.wait_for_open_port("42233")
-
-    machine.succeed("systemctl start hpos-holochain-api.service")
-    machine.wait_for_unit("hpos-holochain-api.service")
-    machine.wait_for_file("/run/hpos-holochain-api/hpos-holochain-api.sock")
 
     machine.wait_for_unit("configure-holochain.service")
+    machine.wait_for_open_port("42233")
+
+    machine.wait_for_unit("hpos-holochain-api.service")
+    machine.wait_for_file("/run/hpos-holochain-api/hpos-holochain-api.sock")
 
     happs = machine.succeed("hc-state -d").strip()
     print(happs)
