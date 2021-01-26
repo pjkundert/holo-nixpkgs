@@ -278,6 +278,11 @@ rec {
 
   inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
+  hpos-holochain-client = callPackage ./hpos-holochain-client {
+    stdenv = stdenvNoCC;
+    python3 = python3.withPackages (ps: [ ps.click ps.requests ]);
+  };
+
   wrangler = callPackage ./wrangler {};
 
   zerotierone = previous.zerotierone.overrideAttrs (
