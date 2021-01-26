@@ -281,7 +281,12 @@ rec {
   tryorama = callPackage ./tryorama {
     inherit (rust.packages.stable) rustPlatform;
   };
-  
+
+  hpos-holochain-client = callPackage ./hpos-holochain-client {
+    stdenv = stdenvNoCC;
+    python3 = python3.withPackages (ps: [ ps.click ps.requests ]);
+  };
+
   wrangler = callPackage ./wrangler {};
 
   zerotierone = previous.zerotierone.overrideAttrs (

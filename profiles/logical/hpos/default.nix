@@ -62,7 +62,7 @@ in
 
   services.holo-auth-client.enable = lib.mkDefault true;
 
-  services.holo-envoy.enable = true;
+  services.holo-envoy.enable = lib.mkDefault true;
 
   services.holo-router-agent.enable = lib.mkDefault true;
 
@@ -171,7 +171,7 @@ in
     '';
   };
 
-  services.holochain = {
+  services.holochain = lib.mkDefault {
     enable = true;
     working-directory = holochainWorkingDir;
     config = {
@@ -202,7 +202,7 @@ in
     };
   };
 
-  services.configure-holochain = {
+  services.configure-holochain = lib.mkDefault {
     enable = true;
     working-directory = configureHolochainWorkingDir;
     install-list = {
