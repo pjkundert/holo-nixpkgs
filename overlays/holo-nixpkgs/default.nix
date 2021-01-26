@@ -278,6 +278,7 @@ rec {
 
   inherit (callPackage ./hpos-holochain-api {}) hpos-holochain-api;
 
+  # here for testing purposes only for trycp_server installation
   tryorama = callPackage ./tryorama {
     inherit (rust.packages.stable) rustPlatform;
   };
