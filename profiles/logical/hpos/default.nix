@@ -43,7 +43,7 @@ in
 
   environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git ];
 
-  networking.firewall.allowedTCPPorts = [ 443 ];
+  networking.firewall.allowedTCPPorts = [ 443 9000 ];
 
   networking.hostName = lib.mkOverride 1100 "hpos";
 
