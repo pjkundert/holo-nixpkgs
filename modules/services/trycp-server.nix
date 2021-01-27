@@ -22,7 +22,7 @@ in
 
       environment.RUST_LOG = "info";
 
-      path = [ pkgs.holochain ];
+      path = [ pkgs.holochain pkgs.lair-keystore ];
 
       serviceConfig.ExecStart = "${cfg.package}/bin/trycp_server -r 9100-9400";
     };
