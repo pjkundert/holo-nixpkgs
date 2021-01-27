@@ -22,6 +22,8 @@ in
 
       environment.RUST_LOG = "info";
 
+      path = [ pkgs.holochain ];
+
       serviceConfig.ExecStart = "${cfg.package}/bin/trycp_server -r 9100-9400";
     };
   };
