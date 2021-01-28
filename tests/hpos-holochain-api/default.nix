@@ -1,41 +1,30 @@
-{ makeTest, lib, hpos, hpos-holochain-client, hpos-config, jq }:
+{ makeTest, lib, hpos, hpos-holochain-client }:
 
 makeTest {
   name = "hpos-holochain-api";
 
   machine = {
-    imports = [ (import "${hpos.logical}/sandbox") ];
+    imports = [ (import "${hpos.logical}/sandbox/test") ];
 
-    documentation.enable = false;
-
-    environment.systemPackages = [
-      hpos-holochain-client
-      hpos-config
-      jq
-    ];
+    environment.systemPackages = [ hpos-holochain-client ];
 
     services.hpos-holochain-api.enable = true;
 
-    services.nginx = {
-      enable = true;
-      virtualHosts.localhost = {
-        locations."/tests/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
-      };
+    services.nginx.virtualHosts.localhost = {
+      locations."/tests/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
     };
-
-    systemd.services.holochain.environment.HPOS_CONFIG_PATH = "/etc/hpos-config.json";
-
-    users.users.nginx.extraGroups = [ "apis" ];
-
-    virtualisation.memorySize = 3072;
   };
 
   testScript = ''
     start_all()
 
+    machine.succeed("mkdir /etc/hpos")
+    machine.succeed("chgrp apis /etc/hpos")
+    machine.succeed("chmod g+rwx /etc/hpos")
     machine.succeed(
-        "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos-config.json"
+        "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos/config.json"
     )
+
     machine.wait_for_unit("holochain.service")
     machine.wait_for_open_port("4444")
 

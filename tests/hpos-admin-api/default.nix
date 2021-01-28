@@ -1,47 +1,32 @@
-{ makeTest, lib, hpos, hpos-admin-client, hpos-config, jq }:
+{ makeTest, lib, hpos, hpos-admin-client }:
 
 makeTest {
   name = "hpos-admin-api";
 
   machine = {
-    imports = [ (import "${hpos.logical}/sandbox") ];
+    imports = [ (import "${hpos.logical}/sandbox/test") ];
 
-    documentation.enable = false;
-
-    environment.systemPackages = [
-      hpos-admin-client
-      hpos-config
-      jq
-    ];
+    environment.systemPackages = [ hpos-admin-client ];
 
     services.hpos-admin-api.enable = true;
 
-    services.nginx = {
-      enable = true;
-      virtualHosts.localhost = {
-        locations."/tests/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
-      };
+    services.nginx.virtualHosts.localhost = {
+      locations."/tests/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
     };
-
-    systemd.services.hpos-admin-api.environment.HPOS_CONFIG_PATH = "/etc/hpos/config.json";
-    systemd.services.holochain.environment.HPOS_CONFIG_PATH = "/etc/hpos/config.json";
-
-    users.users.nginx.extraGroups = [ "apis" ];
-
-    virtualisation.memorySize = 3072;
   };
 
   testScript = ''
     import json
 
     start_all()
+
     machine.succeed("mkdir /etc/hpos")
     machine.succeed("chgrp apis /etc/hpos")
     machine.succeed("chmod g+rwx /etc/hpos")
-
     machine.succeed(
         "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos/config.json"
     )
+
     machine.succeed("systemctl start hpos-admin-api.service")
     machine.wait_for_unit("hpos-admin-api.service")
     machine.wait_for_file("/run/hpos-admin-api/hpos-admin-api.sock")
