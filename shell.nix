@@ -25,8 +25,8 @@ mkShell {
 
     hpos-shell() {
       local attr=$1
-      [ -z "$attr" ] && attr="hpos.qemu"
-      drv=$(nix-build ${root} --attr "$attr" --no-out-link --show-trace \
+      [ -z "$attr" ] && attr="qemu"
+      drv=$(nix-build ${root} --attr "hpos.$attr" --no-out-link --show-trace \
           --option extra-substituters "${builtins.concatStringsSep " " extraSubstitutors}" \
           --option trusted-public-keys  "${builtins.concatStringsSep " " trustedPublicKeys}" )
       [ -z "$drv" ] || "$drv/bin/run-hpos-vm"
