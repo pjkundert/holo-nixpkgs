@@ -12,13 +12,23 @@ in
   documentation.enable = false;
 
   environment.systemPackages = [
+    hpos-admin-client
     hpos-config
+    hpos-holochain-client
     jq
   ];
 
   environment.variables.HPOS_CONFIG_PATH = hposConfigPath;
 
-  services.nginx.enable = true;
+  services.hpos-admin-api.enable = true;
+  services.hpos-holochain-api.enable = true;
+  services.nginx = {
+    enable = true;
+    virtualHosts.localhost.locations = {
+      "/hpos-admin-api/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
+      "/hpos-holochain-api/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
+    };
+  };
 
   systemd.globalEnvironment.HPOS_CONFIG_PATH = hposConfigPath;
 

@@ -3,17 +3,7 @@
 makeTest {
   name = "hpos-holochain-api";
 
-  machine = {
-    imports = [ (import "${hpos.logical}/sandbox/test") ];
-
-    environment.systemPackages = [ hpos-holochain-client ];
-
-    services.hpos-holochain-api.enable = true;
-
-    services.nginx.virtualHosts.localhost = {
-      locations."/tests/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
-    };
-  };
+  machine.imports = [ (import "${hpos.logical}/sandbox/test") ];
 
   testScript = ''
     start_all()
@@ -38,7 +28,7 @@ makeTest {
     print(happs)
 
     list_of_happs = machine.succeed(
-        "hpos-holochain-client --url=http://localhost/tests/ hosted-happs"
+        "hpos-holochain-client --url=http://localhost/hpos-holochain-api/ hosted-happs"
     ).strip()
     assert (
         "'name': 'Elemental Chat'" in list_of_happs
@@ -57,7 +47,7 @@ makeTest {
     }
     print("With preferences: ", preferences)
     installed_status = machine.succeed(
-        f"hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ {happ_id} 10 [86400,0] 0.5 1 0.5"
+        f"hpos-holochain-client --url=http://localhost/hpos-holochain-api/ install-hosted-happ {happ_id} 10 [86400,0] 0.5 1 0.5"
     ).strip()
     print("Installed status: ", installed_status)
     assert "200" in installed_status, "Failed to call /install_hosted_happ"
@@ -83,7 +73,7 @@ makeTest {
 /*
 
     installed_status = machine.succeed(
-        "hpos-holochain-client --url=http://localhost/tests/ install-hosted-happ holohashinput"
+        "hpos-holochain-client --url=http://localhost/hpos-holochain-api/ install-hosted-happ holohashinput"
     ).strip()
 
     print("INSTALLED STATUS: ", installed_status)

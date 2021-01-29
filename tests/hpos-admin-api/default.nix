@@ -3,17 +3,7 @@
 makeTest {
   name = "hpos-admin-api";
 
-  machine = {
-    imports = [ (import "${hpos.logical}/sandbox/test") ];
-
-    environment.systemPackages = [ hpos-admin-client ];
-
-    services.hpos-admin-api.enable = true;
-
-    services.nginx.virtualHosts.localhost = {
-      locations."/tests/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
-    };
-  };
+  machine.imports = [ (import "${hpos.logical}/sandbox/test") ];
 
   testScript = ''
     import json
@@ -32,7 +22,7 @@ makeTest {
     machine.wait_for_file("/run/hpos-admin-api/hpos-admin-api.sock")
 
     machine.succeed(
-        "hpos-admin-client --url=http://localhost/tests/ put-settings example KbFzEiWEmM1ogbJbee2fkrA1"
+        "hpos-admin-client --url=http://localhost/hpos-admin-api/ put-settings example KbFzEiWEmM1ogbJbee2fkrA1"
     )
     expected_settings = {
         "admin": {
@@ -42,7 +32,9 @@ makeTest {
         "example": "KbFzEiWEmM1ogbJbee2fkrA1",
     }
     actual_settings = json.loads(
-        machine.succeed("hpos-admin-client --url=http://localhost/tests/ get-settings")
+        machine.succeed(
+            "hpos-admin-client --url=http://localhost/hpos-admin-api/ get-settings"
+        )
         .strip()
         .replace("'", '"')
     )
