@@ -171,6 +171,7 @@ rec {
 
     test = (buildImage [ "${hpos.physical}/vm/qemu" "${hpos.logical}/sandbox/test"]) // {
       meta.platforms = [ "x86_64-linux" ];
+    };
   };
 
   hpos-admin-api = callPackage ./hpos-admin-api {
