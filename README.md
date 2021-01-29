@@ -146,7 +146,7 @@ hpos-shell <attr>
 
 starts HPOS VM against local checkout of given profile.
 ```
-where `<attr>` is one of the attributes of `hpos` from overlays. If no value given defaults to `qemu`. For example `hpos-shell tests` will start HPOS VM with the profile defined as in `holo-nixpkgs.hpos.tests`.
+where `<attr>` is one of the attributes of `hpos` from overlays. If no value given defaults to `qemu`. For example `hpos-shell tests` will start HPOS VM with the profile defined as in `holo-nixpkgs.hpos.test`.
 
 Very useful for iterative local development.
 
