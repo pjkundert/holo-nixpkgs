@@ -41,7 +41,7 @@ in
   # REVIEW: `true` breaks gtk+ builds (cairo dependency)
   environment.noXlibs = false;
 
-  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git ];
+  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git hpos-holochain-client ];
 
   networking.firewall.allowedTCPPorts = [ 443 9000 ];
 
@@ -161,6 +161,7 @@ in
 
     virtualHosts.localhost = {
         locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
+        locations."/holochain-api/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
       };
 
     appendHttpConfig = ''
