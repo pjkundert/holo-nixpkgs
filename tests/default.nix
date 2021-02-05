@@ -11,6 +11,5 @@ let
 in
 
 {
-  hpos-admin-api = callPackage ./hpos-admin-api {};
-  hpos-holochain-api = callPackage ./hpos-holochain-api {};
+  hpos-api-tests = callPackage ./hpos-api-tests {};
 }
