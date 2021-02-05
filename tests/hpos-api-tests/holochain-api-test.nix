@@ -1,20 +1,5 @@
-{ makeTest, lib, hpos, hpos-holochain-client }:
-
-makeTest {
-  name = "hpos-holochain-api";
-
-  machine.imports = [ (import "${hpos.logical}/sandbox/test") ];
-
-  testScript = ''
-    start_all()
-
-    machine.succeed("mkdir /etc/hpos")
-    machine.succeed("chgrp apis /etc/hpos")
-    machine.succeed("chmod g+rwx /etc/hpos")
-    machine.succeed(
-        "hpos-config-gen-cli --email test\@holo.host --password : --seed-from ${./seed.txt} > /etc/hpos/config.json"
-    )
-
+{
+  holochain-api-test = ''
     machine.wait_for_unit("holochain.service")
     machine.wait_for_open_port("4444")
 
@@ -65,10 +50,7 @@ makeTest {
     slId = happ_id + "::servicelogger"
     assert slId in happsName, "happ does not seem to be installed"
     """
-    machine.shutdown()
   '';
-
-  meta.platforms = [ "x86_64-linux" ];
 }
 /*
 
