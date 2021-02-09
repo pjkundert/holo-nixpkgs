@@ -224,7 +224,7 @@ in
           app_id = "elemental-chat";
           uuid = "develop";
           version = "alpha19";
-          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha26/elemental-chat-for-dna-alpha19-develop.zip";
+          ui_url = "https://github.com/holochain/elemental-chat-ui/releases/download/v0.0.1-alpha27/elemental-chat-for-dna-alpha19-develop.zip";
           dna_url = "https://github.com/holochain/elemental-chat/releases/download/v0.0.1-alpha19/elemental-chat.dna.gz"; # this version mismatch is on purpose for hash alteration
         }
       ];
