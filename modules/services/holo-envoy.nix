@@ -18,7 +18,7 @@ in
 
   config = mkIf cfg.enable {
     systemd.services.holo-envoy = {
-      after = [ "network.target" "holochain-conductor.service" ];
+      after = [ "network.target" "lair-keystore.service" ];
       requires = [ "holochain-conductor.service" ];
       wantedBy = [ "multi-user.target" ];
 
