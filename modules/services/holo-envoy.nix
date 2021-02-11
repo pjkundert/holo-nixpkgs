@@ -18,8 +18,8 @@ in
 
   config = mkIf cfg.enable {
     systemd.services.holo-envoy = {
-      after = [ "network.target" "holochain.service" ];
-      requires = [ "holochain.service" ];
+      after = [ "network.target" "lair-keystore.service" ];
+      requires = [ "lair-keystore.service" ];
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
