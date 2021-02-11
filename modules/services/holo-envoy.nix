@@ -4,6 +4,7 @@ with lib;
 
 let
   cfg = config.services.holo-envoy;
+  holochain-home = config.services.holochain.working-directory;
 in
 
 {
