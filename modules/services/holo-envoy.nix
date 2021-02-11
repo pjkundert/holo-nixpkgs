@@ -22,6 +22,10 @@ in
       requires = [ "lair-keystore.service" ];
       wantedBy = [ "multi-user.target" ];
 
+      preStart = ''
+        mkdir -p ${holochain-home}/lair-shim
+      '';
+
       serviceConfig = {
         Environment = "LOG_LEVEL=silly";
         ExecStart = "${cfg.package}/bin/holo-envoy";
