@@ -15,8 +15,8 @@ mkYarnPackage rec {
   src = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "holo-envoy";
-    rev = "96999fa182e26d756b05d42ec97a37dcd6daf5df";
-    sha256 = "1gg252g2y3qnli0djwlj020ha14g29d9bb13q89jkck9f63lwclz";
+    rev = "e8095418772aecb89561e539c01f099d470d7f15";
+    sha256 = "0z0g9qnf3pahxvi2k2vkf6wwwpfw0vw476787b3vs7v5m1355c7b";
   };
 
   buildInputs = [ python ];
@@ -39,7 +39,7 @@ mkYarnPackage rec {
       mkdir $out
       mv node_modules $out
       cd deps/@holo-host/envoy/
-      mv build websocket-wrappers server.js $out
+      mv build server.js $out
       makeWrapper ${nodejs}/bin/node $out/bin/${name} \
         --add-flags $out/server.js
   '';

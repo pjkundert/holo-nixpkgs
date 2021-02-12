@@ -41,7 +41,7 @@ in
   # REVIEW: `true` breaks gtk+ builds (cairo dependency)
   environment.noXlibs = false;
 
-  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git hpos-holochain-client ];
+  environment.systemPackages = [ git hc-state hpos-admin-client hpos-holochain-client hpos-reset hpos-update-cli ];
 
   networking.firewall.allowedTCPPorts = [ 443 9000 ];
 
@@ -223,22 +223,14 @@ in
         {
           app_id = "core-happs";
           uuid = "0001";
-          version = "alpha9";
-          dna_url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha9/holo-hosting-app.dna.gz";
-          # dna_path = builtins.fetchurl {
-          #   url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha9/holo-hosting-app.dna.gz";
-          #   sha256 = "0z94sg70xi0p3sybi6w1i7rbrnj8pv60m91ybizma0wc5jwmlnq3"; # To get sha run `nix-prefetch-url URL`
-          # };
+          version = "alpha10";
+          dna_url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha10/holo-hosting-app.dna.gz";
         }
         {
           app_id = "servicelogger";
           uuid = "0001";
           version = "alpha4";
           dna_url = "https://holo-host.github.io/servicelogger-rsm/releases/downloads/v0.0.1-alpha4/servicelogger.dna.gz";
-          # dna_path = builtins.fetchurl {
-          #   url = "https://holo-host.github.io/servicelogger-rsm/releases/downloads/v0.0.1-alpha4/servicelogger.dna.gz";
-          #   sha256 = "11w0a1fmm4js9i298ahzmwswv7sza2n0rv9nshl76nl0zi37bdi0"; # To get sha run `nix-prefetch-url URL`
-          # };
         }
       ];
       self_hosted_happs = [
