@@ -7,15 +7,16 @@
 , ps
 , python
 , fetchgit
+, mkYarnPackage
 }:
 
-stdenv.mkDerivation rec {
+mkYarnPackage rec {
   name = "holo-envoy";
   src = fetchFromGitHub {
     owner = "Holo-Host";
     repo = "holo-envoy";
-    rev = "bd8eec1e5ee24c757aa54b5ab0ff0b6c04aec977";
-    sha256 = "0yii2qkc6bcxwjwlvv7nj1awgqbd8a2bxx1gif0fx3jd2r142008";
+    rev = "96999fa182e26d756b05d42ec97a37dcd6daf5df";
+    sha256 = "1gg252g2y3qnli0djwlj020ha14g29d9bb13q89jkck9f63lwclz";
   };
 
   buildInputs = [ python ];
@@ -27,19 +28,18 @@ stdenv.mkDerivation rec {
     ps
   ];
 
-  preConfigure = ''
-    cp -r ${npmToNix { inherit src; }} node_modules
-    chmod -R +w node_modules
-    patchShebangs node_modules
-  '';
+  packageJSON = "${src}/package.json";
+  yarnLock = "${src}/yarn.lock";
 
   buildPhase = ''
-    npm run build
+    yarn build
   '';
 
   installPhase = ''
       mkdir $out
-      mv build node_modules rpc-websocket-wrappers server.js $out
+      mv node_modules $out
+      cd deps/@holo-host/envoy/
+      mv build websocket-wrappers server.js $out
       makeWrapper ${nodejs}/bin/node $out/bin/${name} \
         --add-flags $out/server.js
   '';
@@ -48,10 +48,7 @@ stdenv.mkDerivation rec {
     patchShebangs $out
   '';
 
-  checkPhase = ''
-      make test-nix
-      make stop-sim2h
-  '';
+  distPhase = '':'';
 
   # HACK: consider flipping it on when test timeout issues are resolved
   doCheck = false;
