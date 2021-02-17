@@ -42,6 +42,19 @@ const parsePreferences = (p, key) => {
   }
 }
 
+const formatBytesByUnit = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+  const units = ['Bytes', 'KB', 'MB', 'GB'];
+  const dm = decimals < 0 
+    ? 0 
+    : decimals;
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return {
+    size: parseFloat((bytes / Math.pow(1024, i)).toFixed(dm)),
+    unit: units[i]
+  }
+}
+
 const toInt = (i) => {
   if (typeof i == "string") return parseInt(i)
   else return i

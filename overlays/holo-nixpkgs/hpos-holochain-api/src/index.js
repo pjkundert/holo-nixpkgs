@@ -8,7 +8,7 @@ const { hideBin } = require('yargs/helpers')
 const argv = yargs(hideBin(process.argv)).argv
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
 const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedHapp } = require("./api")
-const { parsePreferences } = require('./utils')
+const { parsePreferences, formatBytesByUnit } = require('./utils')
 const { getAppIds, getReadOnlyPubKey} = require('./const')
 const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 
@@ -24,9 +24,12 @@ app.get('/hosted_happs', async (_, res) => {
   }
   const presentedHapps = []
   for(let i=0; i < happs.length; i++) {
-    let enabled, source_chain;
+    let enabled, source_chain, bandwidth_ns, bandwidth;
     try{
-      source_chain = await callZome(appWs,`${happs[i].happ_id}::servicelogger`, 'service', 'get_source_chain_count', null)
+      // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits) and its duration is calcalated with nanoseconds (not seconds), 
+      ({ source_chain, bandwidth_ns } = await callZome(appWs,`${happs[i].happ_id}::servicelogger`, 'service', 'get_happ_stats', null));
+      // convert bandwidth to be measured by seconds to match standard bandwidth units (ie: 10 MB/s)
+      bandwidth = formatBytesByUnit((bandwidth_ns/1000000000));
       enabled = true
     } catch(e) {
       enabled = false
@@ -36,7 +39,10 @@ app.get('/hosted_happs', async (_, res) => {
         id: happs[i].happ_id,
         name: happs[i].happ_bundle.name,
         enabled,
-        source_chain
+        source_chain,
+        usage: {
+          bandwidth
+        }
     })
   }
   res.status(200).send(presentedHapps)
