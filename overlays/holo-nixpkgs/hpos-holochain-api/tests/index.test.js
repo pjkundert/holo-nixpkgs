@@ -7,7 +7,9 @@ test('Test holochain-api endpoint ', async () => {
     expect(listOfHapps.status).toBe(200);
     expect(listOfHapps.body[0].enabled).toBe(false);
     expect(listOfHapps.body[0].source_chain).toBe(0)
-    preferences = {
+    expect(listOfHapps.body[0].usage).toBe({})
+
+    const preferences = {
           "max_fuel_before_invoice": 1,
           "max_time_before_invoice": [80000, 0],
           "price_compute": 1,
@@ -22,4 +24,5 @@ test('Test holochain-api endpoint ', async () => {
     expect(listOfHappsReload.status).toBe(200);
     expect(listOfHappsReload.body[0].enabled).toBe(true);
     expect(listOfHappsReload.body[0].source_chain).toBe(0)
+    expect(listOfHapps.body[0].usage).toBe({})
 }, 30000);

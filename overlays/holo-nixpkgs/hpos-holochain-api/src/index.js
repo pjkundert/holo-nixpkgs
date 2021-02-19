@@ -12,7 +12,7 @@ const { parsePreferences, formatBytesByUnit } = require('./utils')
 const { getAppIds, getReadOnlyPubKey} = require('./const')
 const { AdminWebsocket, AppWebsocket } = require("@holochain/conductor-api")
 
-app.get('/hosted_happs', async (_, res) => {
+app.get('/hosted_happs', async (time_interval, res) => {
   let happs
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`);
   try {
@@ -24,24 +24,34 @@ app.get('/hosted_happs', async (_, res) => {
   }
   const presentedHapps = []
   for(let i=0; i < happs.length; i++) {
-    let enabled, source_chain, bandwidth_ns, bandwidth;
+    let app_stats, enabled, source_chains, duration, bandwidth, cpu;
     try{
-      // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits) and its duration is calcalated with nanoseconds (not seconds), 
-      ({ source_chain, bandwidth_ns } = await callZome(appWs,`${happs[i].happ_id}::servicelogger`, 'service', 'get_happ_stats', null));
-      // convert bandwidth to be measured by seconds to match standard bandwidth units (ie: 10 MB/s)
-      bandwidth = formatBytesByUnit((bandwidth_ns/1000000000));
+      // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits)
+      app_stats = await callZome(appWs,`${happs[i].happ_id}::servicelogger`, 'service', 'get_happ_usage', time_interval);
       enabled = true
     } catch(e) {
-      enabled = false
-      source_chain = 0
+      throw new Error(`Error calling get_stats from ${happs[i].happ_id}::servicelogger : `, e);
     }
+    
+    if (!app_stats) {
+      enabled = false
+      source_chains = 0
+      usage = {}
+    } else {
+      ({ source_chain_count: source_chains, duration, bandwidth, cpu } = app_stats);
+      const formatted_bandwidth = formatBytesByUnit(bandwidth); // format bandwidth into object with highest appropriate unit of measurement and respective size (ie: { size: 1, unit: GB })
+      bandwidth = formatted_bandwidth;
+    }
+
     presentedHapps.push({
         id: happs[i].happ_id,
         name: happs[i].happ_bundle.name,
         enabled,
-        source_chain,
+        source_chains,
         usage: {
-          bandwidth
+          duration,
+          bandwidth,
+          cpu
         }
     })
   }

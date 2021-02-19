@@ -62,5 +62,6 @@ const toInt = (i) => {
 
 module.exports = {
   parsePreferences,
+  formatBytesByUnit,
   downloadFile
 }
