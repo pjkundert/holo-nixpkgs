@@ -3,8 +3,11 @@
 const fs = require('fs')
 const express = require('express')
 const app = express()
+const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
+yargs(hideBin(process.argv))
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
-const { callZome, createAgent, startHappInterface, listInstalledApps, installHostedHapp } = require('./api')
+const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api') // startHappInterface
 const { parsePreferences, formatBytesByUnit } = require('./utils')
 const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
@@ -82,12 +85,12 @@ app.post('/install_hosted_happ', async (req, res) => {
     // }
     const preferences = data.preferences
     if (!preferences.max_fuel_before_invoice ||
-       !preferences.max_time_before_invoice ||
-       !preferences.price_compute ||
-       !preferences.price_storage ||
-       !preferences.price_bandwidth) {
-      console.log('wrong preferences...');
-      return res.status(501).send(`hpos-holochain-api error: preferences does not include all the necessary values`);
+      !preferences.max_time_before_invoice ||
+      !preferences.price_compute ||
+      !preferences.price_storage ||
+      !preferences.price_bandwidth) {
+      console.log('wrong preferences...')
+      return res.status(501).send(`hpos-holochain-api error: preferences does not include all the necessary values`)
     }
     console.log('Trying to install happ with happId: ', happId)
 
