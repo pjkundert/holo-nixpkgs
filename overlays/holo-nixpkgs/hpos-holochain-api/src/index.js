@@ -36,7 +36,11 @@ app.get('/hosted_happs', async (time_interval, res) => {
     if (!app_stats) {
       enabled = false
       source_chains = 0
-      usage = {}
+      usage = {
+        duration: '0',
+        bandwidth: { size: 0, unit: 'GB' },
+        cpu: '0'
+      }
     } else {
       ({ source_chain_count: source_chains, duration, bandwidth, cpu } = app_stats);
       const formatted_bandwidth = formatBytesByUnit(bandwidth); // format bandwidth into object with highest appropriate unit of measurement and respective size (ie: { size: 1, unit: GB })
