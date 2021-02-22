@@ -61,6 +61,9 @@ app.get('/hosted_happs', async (usageTimeInterval, res) => {
       enabled,
       sourceChains,
       usage
+      // TODO: add following data to match proposed api: https://hackmd.io/bgCdVjskR1iD_4DgQjkzPA
+      // daysHosted,
+      // storage
     })
   }
   res.status(200).send(presentedHapps)
