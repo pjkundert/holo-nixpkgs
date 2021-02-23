@@ -24,6 +24,7 @@ const installHostedHapp = async (happId, dna, agentPubKey, serviceloggerPref) =>
     console.log('Downloading DNA URL...')
     const payloadDna = []
     for (let i = 0; i < dna.length; i++) {
+
       const dnaPath = await downloadFile(dna[i].src_url)
       const registeredHash = await adminWebsocket.registerDna({
         source: { path: dnaPath }

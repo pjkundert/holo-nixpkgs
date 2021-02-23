@@ -8,11 +8,22 @@ const { hideBin } = require('yargs/helpers')
 yargs(hideBin(process.argv))
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
 const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api')
-const { parsePreferences } = require('./utils')
+const { parsePreferences, isusageTimeInterval } = require('./utils')
 const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 
-app.get('/hosted_happs', async (_, res) => {
+// NB: `/hosted_happs` accepts `usageTimeInterval` as its only param - this value is passed to SL to calcuate the usage data for said time interval
+// usageTimeInterval = {
+//   durationUnit: String // accepted units: 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR
+//   amount: Int
+// }
+
+app.get('/hosted_happs', async (req, res) => {
+  let usageTimeInterval
+  await req.on('data', (body) => {
+    usageTimeInterval = JSON.parse(body.toString())
+    if (!isusageTimeInterval(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
+  })
   let happs
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
   try {
@@ -24,19 +35,44 @@ app.get('/hosted_happs', async (_, res) => {
   }
   const presentedHapps = []
   for (let i = 0; i < happs.length; i++) {
-    let enabled, sourceChain
+    const usage = {
+      bandwidth: 0,
+      cpu: 0
+    }
+    let appStats, enabled
     try {
-      sourceChain = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_source_chain_count', null)
+      appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_stats', usageTimeInterval)
       enabled = true
     } catch (e) {
-      enabled = false
-      sourceChain = 0
+      const happServiceloggerError = {
+        id: happs[i].happ_id,
+        name: happs[i].happ_bundle.name,
+        enabled: false,
+        error: {
+          source: `${happs[i].happ_id}::servicelogger`,
+          message: e.message,
+          stack: e.stack
+        }
+      }
+      presentedHapps.push(happServiceloggerError)
+      break
     }
+
+    // nb: servicelogger bandwidth payload is calculated in Bytes (not bits)
+    // and servicelogger cpu is calculated in microseconds (not seconds)
+    const { source_chain_count: sourceChains, bandwidth, cpu } = appStats
+    usage.cpu = cpu
+    usage.bandwidth = bandwidth
+
     presentedHapps.push({
       id: happs[i].happ_id,
       name: happs[i].happ_bundle.name,
       enabled,
-      source_chain: sourceChain
+      sourceChains,
+      usage
+      // TODO: add following data to match proposed api: https://hackmd.io/bgCdVjskR1iD_4DgQjkzPA
+      // daysHosted,
+      // storage
     })
   }
   res.status(200).send(presentedHapps)
@@ -53,10 +89,10 @@ app.post('/install_hosted_happ', async (req, res) => {
   if (data.happ_id && data.preferences) {
     const happId = data.happ_id
     // preferences: {
-    //   max_fuel_before_invoice: "5", // how much holofuel to accumulate before sending invoice
-    //   price_compute: "1",
-    //   price_storage: "1",
-    //   price_bandwidth: "1",
+    //   max_fuel_before_invoice: '5', // how much holofuel to accumulate before sending invoice
+    //   price_compute: '1',
+    //   price_storage: '1',
+    //   price_bandwidth: '1',
     //   max_time_before_invoice: [86400, 0], // how much time to allow to pass before sending invoice even if fuel trigger not reached.
     // }
     const preferences = data.preferences
@@ -81,7 +117,6 @@ app.post('/install_hosted_happ', async (req, res) => {
       return res.status(501).send(`hpos-holochain-api error: ${e}`)
     }
     console.log('Happ Bundle: ', happBundleDetails)
-
     let listOfInstalledHapps
     // Instalation Process:
     try {
@@ -105,6 +140,7 @@ app.post('/install_hosted_happ', async (req, res) => {
         console.log('Parsed Preferences: ', serviceloggerPref)
         await installHostedHapp(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
       }
+
       // Note: Do not need to install UI's for hosted happ
       return res.status(200).send(`Successfully installed happ_id: ${happId}`)
     } catch (e) {
