@@ -44,10 +44,9 @@ test('Test holochain-api endpoint ', async () => {
 
   const listOfHappsReload = await request(app).get('/hosted_happs').send(usageTimeInterval)
   const usage = {
-    bandwidth: { size: 0, unit: 'Bytes' },
+    bandwidth: 0,
     cpu: 0
   }
-
   expect(listOfHappsReload.status).toBe(200)
   expect(listOfHappsReload.body[0].enabled).toBe(true)
   expect(listOfHappsReload.body[0].name).toBe(HAPP_NAME)

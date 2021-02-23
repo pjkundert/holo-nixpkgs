@@ -8,7 +8,7 @@ const { hideBin } = require('yargs/helpers')
 yargs(hideBin(process.argv))
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
 const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api')
-const { parsePreferences, formatBytesByUnit, isusageTimeInterval } = require('./utils')
+const { parsePreferences, isusageTimeInterval } = require('./utils')
 const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 
@@ -36,7 +36,7 @@ app.get('/hosted_happs', async (req, res) => {
   const presentedHapps = []
   for (let i = 0; i < happs.length; i++) {
     const usage = {
-      bandwidth: { size: 0, unit: 'Bytes' },
+      bandwidth: 0,
       cpu: 0
     }
     let appStats, enabled, sourceChains
@@ -65,9 +65,7 @@ app.get('/hosted_happs', async (req, res) => {
       let bandwidth, cpu
       ({ source_chain_count: sourceChains, bandwidth, cpu } = appStats)
       usage.cpu = cpu
-      // format bandwidth into object with highest appropriate unit of measurement and respective size (ie: { size: 1, unit: GB })
-      const formattedBandwidth = formatBytesByUnit(bandwidth)
-      usage.bandwidth = formattedBandwidth
+      usage.bandwidth = bandwidth
     }
 
     presentedHapps.push({
