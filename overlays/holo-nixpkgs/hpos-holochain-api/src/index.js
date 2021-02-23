@@ -39,7 +39,7 @@ app.get('/hosted_happs', async (req, res) => {
       bandwidth: 0,
       cpu: 0
     }
-    let appStats, enabled, sourceChains
+    let appStats, enabled
     try {
       // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits)
       appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_stats', usageTimeInterval)
@@ -58,15 +58,10 @@ app.get('/hosted_happs', async (req, res) => {
       presentedHapps.push(happServiceloggerError)
       break
     }
-    if (!appStats) {
-      enabled = false
-      sourceChains = 0
-    } else {
-      let bandwidth, cpu
-      ({ source_chain_count: sourceChains, bandwidth, cpu } = appStats)
-      usage.cpu = cpu
-      usage.bandwidth = bandwidth
-    }
+
+    const { source_chain_count: sourceChains, bandwidth, cpu } = appStats
+    usage.cpu = cpu
+    usage.bandwidth = bandwidth
 
     presentedHapps.push({
       id: happs[i].happ_id,
