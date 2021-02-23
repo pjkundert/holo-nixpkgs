@@ -12,27 +12,10 @@ const { parsePreferences, isusageTimeInterval } = require('./utils')
 const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 
-// NB: `/hosted_happs` accepts `usageTimeInterval` as its only param - this value is passed to SL to calcuate the usage data for said time interval
-// usageTimeInterval = {
-//   durationUnit: String // accepted units: 'HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR
-//   amount: Int
-// }
-
-app.get('/hosted_happs', async (req, res) => {
-  let usageTimeInterval
-  await req.on('data', (body) => {
-    usageTimeInterval = JSON.parse(body.toString())
-    if (!isusageTimeInterval(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
-  })
-  let happs
+const getPresentedHapps = async usageTimeInterval => {
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
-  try {
-    const APP_ID = await getAppIds()
-    happs = await callZome(appWs, APP_ID.HHA, 'hha', 'get_happs', null)
-  } catch (e) {
-    console.log('error from /hosted_happs:', e)
-    return res.status(501).send(`hpos-holochain-api error: ${e}`)
-  }
+  const APP_ID = await getAppIds()
+  const happs = await callZome(appWs, APP_ID.HHA, 'hha', 'get_happs', null)
   const presentedHapps = []
   for (let i = 0; i < happs.length; i++) {
     const usage = {
@@ -59,7 +42,7 @@ app.get('/hosted_happs', async (req, res) => {
       break
     }
 
-    const { source_chain_count: sourceChains, bandwidth, cpu } = appStats
+    const { source_chain_count: sourceChains, bandwidth, cpu, disk_usage: storage } = appStats
     usage.cpu = cpu
     usage.bandwidth = bandwidth
 
@@ -68,13 +51,65 @@ app.get('/hosted_happs', async (req, res) => {
       name: happs[i].happ_bundle.name,
       enabled,
       sourceChains,
-      usage
-      // TODO: add following data to match proposed api: https://hackmd.io/bgCdVjskR1iD_4DgQjkzPA
-      // daysHosted,
-      // storage
+      usage,
+      storage
     })
   }
-  res.status(200).send(presentedHapps)
+}
+
+app.get('/hosted_happs', async (req, res) => {
+  let usageTimeInterval
+  await req.on('data', (body) => {
+    usageTimeInterval = JSON.parse(body.toString())
+    if (!isusageTimeInterval(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
+  })
+
+  try {
+    const presentedHapps = await getPresentedHapps(usageTimeInterval)
+    res.status(200).send(presentedHapps)  
+  } catch (e) {
+    return res.status(501).send(`hpos-holochain-api error: ${e}`)
+  }
+})
+
+app.get('/dashboard', async (req, res) => {
+  let usageTimeInterval
+  await req.on('data', (body) => {
+    usageTimeInterval = JSON.parse(body.toString())
+    if (!isusageTimeInterval(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
+  })
+
+  try {
+    const presentedHapps = await getPresentedHapps(usageTimeInterval)
+    const enabledHapps = presentedHapps.filter(happ => happ.enabled)
+
+    const dashboard = enabledHapps.reduce((acc, happ) => {
+      const totalSourceChains = acc.totalSourceChains + happ.sourceChains
+      const currentTotalStorage = acc.currentTotalStorage + happ.usage.storage
+      const cpu = acc.oneDayUsage.cpu + happ.usage.cpu
+      const bandwidth = acc.oneDayUsage.bandwidth + happ.usage.bandwidth
+
+      return {
+        totalSourceChains,
+        currentTotalStorage,
+        oneDayUsage: {
+          cpu,
+          bandwidth
+        }
+      }
+    }, {
+      totalSourceChains: 0,
+      currentTotalStorage: 0,
+      oneDayUsage: {
+        cpu: 0,
+        bandwidth: 0
+      }
+    })
+
+    res.status(200).send(dashboard)
+  } catch (e) {
+    return res.status(501).send(`hpos-holochain-api error: ${e}`)
+  }
 })
 
 app.post('/install_hosted_happ', async (req, res) => {
