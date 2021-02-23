@@ -26,6 +26,7 @@ test('Test holochain-api endpoint ', async () => {
   expect(listOfHappsResponse.body[0].sourceChains).toBeFalsy()
   expect(listOfHappsResponse.body[0].usage).toBeFalsy()
 
+
   const preferences = {
     "max_fuel_before_invoice": 1,
     "max_time_before_invoice": [80000, 0],
@@ -50,6 +51,5 @@ test('Test holochain-api endpoint ', async () => {
   expect(listOfHappsReload.body[0].enabled).toBe(true)
   expect(listOfHappsReload.body[0].name).toBe(HAPP_NAME)
   expect(listOfHappsReload.body[0].sourceChains).toBe(0)
-  expect(listOfHappsReload.body[0].storage).toBe(0)
   expect(listOfHappsReload.body[0].usage).toStrictEqual(usage)
 }, 50000)
