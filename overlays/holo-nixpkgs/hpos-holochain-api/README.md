@@ -28,21 +28,11 @@ This endpoint is called to read all current hosted happs and return the usage da
       "bandwidth": 10,
       "cpu": 7
     },
-    
-  },{ // un-enabled happ (and no usage stats)
-    "id": "uhCkkyw_FSJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
-    "name": "Holofuel",
-    "enabled": "false",
-    "sourceChains": 0,
-    "usage" : {
-      "bandwidth": 0,
-      "cpu": 0
-    }
   },{ // unregisted servicelogger for app
     "id": "uhCkkinFSJP_yrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vL3i",
     "name": "Holo Wiki",
     "enabled": "false",
-    "usage" : {
+    "error" : {
       "source": "uhCkkinFSJP_yrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vL3i::servicelogger",
       "message": "error message",
       "stack": "error stack: error at line /... /..."

@@ -24,7 +24,6 @@ const getPresentedHapps = async usageTimeInterval => {
     }
     let appStats, enabled
     try {
-      // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits)
       appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_stats', usageTimeInterval)
       enabled = true
     } catch (e) {
@@ -66,7 +65,7 @@ app.get('/hosted_happs', async (req, res) => {
 
   try {
     const presentedHapps = await getPresentedHapps(usageTimeInterval)
-    res.status(200).send(presentedHapps)  
+    res.status(200).send(presentedHapps)
   } catch (e) {
     return res.status(501).send(`hpos-holochain-api error: ${e}`)
   }
