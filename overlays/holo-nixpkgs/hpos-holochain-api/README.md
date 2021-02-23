@@ -5,18 +5,48 @@ The hpos-holochina-api is an express server that exposes endpoints that interact
 ## Exposed Endpoints
 
 ### 1. `GET /hosted_happs`
-**Response Body:**
+This endpoint is called to read all current hosted happs and return the usage data for each by passing the usageTimeInterval object to query usage entry data in each servicelogger instance
+
+**Request Body**
 ```json
-  [{
+{
+  "duration_unit": "WEEK", // type String (OPTIONS: "DAY" | "WEEK" | "MONTH" | "YEAR")
+  "amount": 1 // type Int
+}
+```
+
+**Response Body:**
+#### Response with all successful servicelogger calls
+`HTTP STATUS 200`:
+```json
+  [{ // enabled app with usage stats
     "id": "uhCkkyw_BVJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
     "name": "Elemental Chat",
     "enabled": "true",
-    "source_chain": 3
-  },{
+    "sourceChains": 3,
+    "usage" : {
+      "bandwidth": 10,
+      "cpu": 7
+    },
+    
+  },{ // un-enabled happ (and no usage stats)
     "id": "uhCkkyw_FSJPyrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vEOh",
     "name": "Holofuel",
     "enabled": "false",
-    "source_chain": 0
+    "sourceChains": 0,
+    "usage" : {
+      "bandwidth": 0,
+      "cpu": 0
+    }
+  },{ // unregisted servicelogger for app
+    "id": "uhCkkinFSJP_yrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vL3i",
+    "name": "Holo Wiki",
+    "enabled": "false",
+    "usage" : {
+      "source": "uhCkkinFSJP_yrv469jrFjzpAMS3toP4bctbbqmtzcEXUUSX5vL3i::servicelogger",
+      "message": "error message",
+      "stack": "error stack: error at line /... /..."
+    }
   }]
 ```
 
