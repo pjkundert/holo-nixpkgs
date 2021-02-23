@@ -19,6 +19,8 @@ const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 // }
 
 app.get('/hosted_happs', async (usageTimeInterval, res) => {
+  console.log('=============> INSIDE hosted_happ')
+
   let happs
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
   try {
@@ -40,7 +42,12 @@ app.get('/hosted_happs', async (usageTimeInterval, res) => {
       appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_happ_usage', usageTimeInterval)
       enabled = true
     } catch (e) {
-      throw new Error(`Error calling get_stats from ${happs[i].happ_id}::servicelogger : `, e)
+      const callError = {
+        "source": `${happs[i].happ_id}::servicelogger`,
+        "message": e.message,
+        "stack": e.stack
+      }
+      return res.status(500).send(callError)
     }
 
     if (!appStats) {
