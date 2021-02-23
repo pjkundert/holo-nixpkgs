@@ -59,8 +59,13 @@ const toInt = (i) => {
   else return i
 }
 
+function isObject (obj) {
+  return obj === Object(obj)
+}  
+
 module.exports = {
   parsePreferences,
   formatBytesByUnit,
-  downloadFile
+  downloadFile,
+  isObject
 }
