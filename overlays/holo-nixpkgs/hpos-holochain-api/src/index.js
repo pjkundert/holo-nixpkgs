@@ -41,7 +41,6 @@ app.get('/hosted_happs', async (req, res) => {
     }
     let appStats, enabled
     try {
-      // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits)
       appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_stats', usageTimeInterval)
       enabled = true
     } catch (e) {
@@ -59,6 +58,8 @@ app.get('/hosted_happs', async (req, res) => {
       break
     }
 
+    // nb: servicelogger bandwidth payload is calculated in Bytes (not bits)
+    // and servicelogger cpu is calculated in microseconds (not seconds)
     const { source_chain_count: sourceChains, bandwidth, cpu } = appStats
     usage.cpu = cpu
     usage.bandwidth = bandwidth
