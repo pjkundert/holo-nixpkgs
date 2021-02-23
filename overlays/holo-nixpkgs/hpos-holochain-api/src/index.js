@@ -8,8 +8,8 @@ const { hideBin } = require('yargs/helpers')
 yargs(hideBin(process.argv))
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
 const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api') // startHappInterface
-const { parsePreferences, formatBytesByUnit } = require('./utils')
-const { getAppIds, getReadOnlyPubKey, isObject } = require('./const')
+const { parsePreferences, formatBytesByUnit, isusageTimeInterval } = require('./utils')
+const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 
 // NB: `/hosted_happs` accepts `usageTimeInterval` as its only param - this value is passed to SL to calcuate the usage data for said time interval
@@ -22,7 +22,7 @@ app.get('/hosted_happs', async (req, res) => {
   let usageTimeInterval
   await req.on('data', (body) => {
     usageTimeInterval = JSON.parse(body.toString())
-    if (!isObject(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
+    if (!isusageTimeInterval(usageTimeInterval)) return res.status(501).send('error from /hosted_happs: param provided is not an object')
   })
   let happs
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)

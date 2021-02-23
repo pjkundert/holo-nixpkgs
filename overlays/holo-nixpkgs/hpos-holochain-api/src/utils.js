@@ -54,18 +54,20 @@ const formatBytesByUnit = (bytes, decimals = 2) => {
   }
 }
 
-const toInt = (i) => {
+const toInt = i => {
   if (typeof i === 'string') return parseInt(i)
   else return i
 }
 
-function isObject (obj) {
-  return obj === Object(obj)
-}  
+const isusageTimeInterval = value => {
+  if (value === null) return false
+  const keys = Object.keys(value)
+  return keys.includes('duration_unit') && keys.includes('amount')
+}
 
 module.exports = {
   parsePreferences,
   formatBytesByUnit,
   downloadFile,
-  isObject
+  isusageTimeInterval
 }
