@@ -7,7 +7,7 @@
     "hpos-holochain-api": "src/index.js"
   },
   "scripts": {
-    "test": "jest --forceExit --detectOpenHandles",
+    "test": "jest --forceExit",
     "build": "webpack --config webpack.config.cjs",
     "fetch-dnas": "sh ./scripts/fetch-dna.sh",
     "holochain": "holochain-run-dna -c ./tests/config.yml -a 4444"

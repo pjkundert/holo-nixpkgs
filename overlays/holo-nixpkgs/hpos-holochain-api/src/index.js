@@ -18,9 +18,11 @@ const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
 //   amount: Int
 // }
 
-app.get('/hosted_happs', async (usageTimeInterval, res) => {
-  console.log('=============> INSIDE hosted_happ')
-
+app.get('/hosted_happs', async (req, res) => {
+  let usageTimeInterval
+  await req.on('data', (body) => {
+    usageTimeInterval = JSON.parse(body.toString())
+  })
   let happs
   const appWs = await AppWebsocket.connect(`ws://localhost:${HAPP_PORT}`)
   try {
@@ -33,23 +35,28 @@ app.get('/hosted_happs', async (usageTimeInterval, res) => {
   const presentedHapps = []
   for (let i = 0; i < happs.length; i++) {
     const usage = {
-      bandwidth: { size: 0, unit: 'GB' },
-      cpu: '0'
+      bandwidth: { size: 0, unit: 'Bytes' },
+      cpu: 0
     }
     let appStats, enabled, sourceChains
     try {
       // nb: servicelogger bandwidth payload is calcalated with Bytes (not bits)
-      appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_happ_usage', usageTimeInterval)
+      appStats = await callZome(appWs, `${happs[i].happ_id}::servicelogger`, 'service', 'get_stats', usageTimeInterval)
       enabled = true
     } catch (e) {
-      const callError = {
-        "source": `${happs[i].happ_id}::servicelogger`,
-        "message": e.message,
-        "stack": e.stack
+      const happServiceloggerError = {
+        id: happs[i].happ_id,
+        name: happs[i].happ_bundle.name,
+        enabled: false,
+        error: {
+          source: `${happs[i].happ_id}::servicelogger`,
+          message: e.message,
+          stack: e.stack
+        }
       }
-      return res.status(500).send(callError)
+      presentedHapps.push(happServiceloggerError)
+      break
     }
-
     if (!appStats) {
       enabled = false
       sourceChains = 0
@@ -139,6 +146,8 @@ app.post('/install_hosted_happ', async (req, res) => {
         console.log('Parsed Preferences: ', serviceloggerPref)
         await installHostedHapp(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
       }
+
+      console.log('INSTALLED THE HAPP...')
       // Note: Do not need to install UI's for hosted happ
       return res.status(200).send(`Successfully installed happ_id: ${happId}`)
     } catch (e) {
