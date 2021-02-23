@@ -7,7 +7,7 @@ const yargs = require('yargs/yargs')
 const { hideBin } = require('yargs/helpers')
 yargs(hideBin(process.argv))
 const { UNIX_SOCKET, HAPP_PORT, ADMIN_PORT } = require('./const')
-const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api') // startHappInterface
+const { callZome, createAgent, listInstalledApps, installHostedHapp } = require('./api')
 const { parsePreferences, formatBytesByUnit, isusageTimeInterval } = require('./utils')
 const { getAppIds, getReadOnlyPubKey } = require('./const')
 const { AdminWebsocket, AppWebsocket } = require('@holochain/conductor-api')
@@ -147,7 +147,6 @@ app.post('/install_hosted_happ', async (req, res) => {
         await installHostedHapp(happBundleDetails.happ_id, dnas, hostPubKey, serviceloggerPref)
       }
 
-      console.log('INSTALLED THE HAPP...')
       // Note: Do not need to install UI's for hosted happ
       return res.status(200).send(`Successfully installed happ_id: ${happId}`)
     } catch (e) {
