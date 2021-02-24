@@ -39,8 +39,35 @@ This endpoint is called to read all current hosted happs and return the usage da
     }
   }]
 ```
+`bandwidth` and `storage` are both presented as number of bytes. `cpu` as number of *microseconds*.
 
-### 2. `POST /install_hosted_happ`
+### 2. `GET /dashboard`
+Returns data for the dashboard page of host-console. Mostly usage data aggregated across all happs.
+
+**Request Body**
+```json
+{
+  "duration_unit": "DAY", // type String (OPTIONS: "DAY" | "WEEK" | "MONTH" | "YEAR")
+  "amount": 1 // type Int
+}
+```
+
+**Response Body:**
+#### Response with all successful servicelogger calls
+`HTTP STATUS 200`:
+```javascript
+{
+  totalSourceChains: 10,
+  currentTotalStorage: 2000,
+  oneDayUsage: {
+    cpu: 100,
+    bandwidth: 3000
+  }
+}
+```
+`bandwidth` and `currentTotalStorage` are both presented as number of bytes. `cpu` as number of *microseconds*.
+
+### 3. `POST /install_hosted_happ`
 This endpoint is called to install/enable a hosted happ by passing the happ_id and preferences to set up the servicelogger instance
 
 **Request Body**
