@@ -91,7 +91,7 @@ app.get('/dashboard', async (req, res) => {
       return {
         totalSourceChains,
         currentTotalStorage,
-        oneDayUsage: {
+        usage: {
           cpu,
           bandwidth
         }
@@ -99,7 +99,7 @@ app.get('/dashboard', async (req, res) => {
     }, {
       totalSourceChains: 0,
       currentTotalStorage: 0,
-      oneDayUsage: {
+      usage: {
         cpu: 0,
         bandwidth: 0
       }

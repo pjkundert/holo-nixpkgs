@@ -59,13 +59,13 @@ Returns data for the dashboard page of host-console. Mostly usage data aggregate
 {
   totalSourceChains: 10,
   currentTotalStorage: 2000,
-  oneDayUsage: {
+  usage: {
     cpu: 100,
     bandwidth: 3000
   }
 }
 ```
-`bandwidth` and `currentTotalStorage` are both presented as number of bytes. `cpu` as number of *microseconds*.
+`bandwidth` and `currentTotalStorage` are both presented as number of *bytes*. `cpu` as number of *microseconds*.
 
 ### 3. `POST /install_hosted_happ`
 This endpoint is called to install/enable a hosted happ by passing the happ_id and preferences to set up the servicelogger instance

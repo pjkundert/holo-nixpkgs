@@ -16,7 +16,7 @@ function delay(t, val) {
   })
 }
 
-test('Test holochain-api endpoint ', async () => {
+test('holochain-api endpoint ', async () => {
   const listOfHappsResponse = await request(app).get('/hosted_happs').send(usageTimeInterval)
   expect(listOfHappsResponse.status).toBe(200)
   expect(listOfHappsResponse.body[0].name).toBe(HAPP_NAME)
@@ -52,4 +52,18 @@ test('Test holochain-api endpoint ', async () => {
   expect(listOfHappsReload.body[0].sourceChains).toBe(0)
   expect(listOfHappsReload.body[0].storage).toBe(0)
   expect(listOfHappsReload.body[0].usage).toStrictEqual(usage)
+}, 50000)
+
+test('dashboard endpoint', async () => {
+  const usageTimeInterval = {
+    duration_unit: 'DAY',
+    amount: 1
+  }
+
+  const dashboardResponse = await request(app).get('/dashboard').send(usageTimeInterval)
+  expect(dashboardResponse.status).toBe(200)
+  expect(dashboardResponse.body.totalSourceChains).toBe(0)
+  expect(dashboardResponse.body.currentTotalStorage).toBe(0)
+  expect(dashboardResponse.body.usage.cpu).toBe(0)
+  expect(dashboardResponse.body.usage.bandwidth).toBe(0)
 }, 50000)
