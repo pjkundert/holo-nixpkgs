@@ -54,6 +54,7 @@ const getPresentedHapps = async usageTimeInterval => {
       storage
     })
   }
+  return presentedHapps
 }
 
 app.get('/hosted_happs', async (req, res) => {
@@ -84,9 +85,9 @@ app.get('/dashboard', async (req, res) => {
 
     const dashboard = enabledHapps.reduce((acc, happ) => {
       const totalSourceChains = acc.totalSourceChains + happ.sourceChains
-      const currentTotalStorage = acc.currentTotalStorage + happ.usage.storage
-      const cpu = acc.oneDayUsage.cpu + happ.usage.cpu
-      const bandwidth = acc.oneDayUsage.bandwidth + happ.usage.bandwidth
+      const currentTotalStorage = acc.currentTotalStorage + happ.storage
+      const cpu = acc.usage.cpu + happ.usage.cpu
+      const bandwidth = acc.usage.bandwidth + happ.usage.bandwidth
 
       return {
         totalSourceChains,
