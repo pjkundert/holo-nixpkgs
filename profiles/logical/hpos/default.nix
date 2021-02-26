@@ -41,7 +41,7 @@ in
   # REVIEW: `true` breaks gtk+ builds (cairo dependency)
   environment.noXlibs = false;
 
-  environment.systemPackages = [ hc-state hpos-reset hpos-admin-client hpos-update-cli git ];
+  environment.systemPackages = [ git hc-state hpos-admin-client hpos-holochain-client hpos-reset hpos-update-cli ];
 
   networking.firewall.allowedTCPPorts = [ 443 9000 ];
 
@@ -161,6 +161,7 @@ in
 
     virtualHosts.localhost = {
         locations."/".proxyPass = "http://unix:/run/hpos-admin-api/hpos-admin-api.sock:/";
+        locations."/holochain-api/".proxyPass = "http://unix:/run/hpos-holochain-api/hpos-holochain-api.sock:/";
       };
 
     appendHttpConfig = ''
@@ -176,7 +177,7 @@ in
     working-directory = holochainWorkingDir;
     config = {
       environment_path = "${holochainWorkingDir}/databases";
-      keystore_path = "${holochainWorkingDir}/lair-keystore";
+      keystore_path = "${holochainWorkingDir}/lair-shim";
       use_dangerous_test_keystore = false;
       admin_interfaces = [
         {
@@ -218,7 +219,20 @@ in
     enable = true;
     working-directory = configureHolochainWorkingDir;
     install-list = {
-      core_happs = [];
+      core_happs = [
+        {
+          app_id = "core-happs";
+          uuid = "0001";
+          version = "alpha10";
+          dna_url = "https://holo-host.github.io/holo-hosting-app-rsm/releases/downloads/v0.0.1-alpha10/holo-hosting-app.dna.gz";
+        }
+        {
+          app_id = "servicelogger";
+          uuid = "0001";
+          version = "alpha4";
+          dna_url = "https://holo-host.github.io/servicelogger-rsm/releases/downloads/v0.0.1-alpha4/servicelogger.dna.gz";
+        }
+      ];
       self_hosted_happs = [
         {
           app_id = "elemental-chat";
