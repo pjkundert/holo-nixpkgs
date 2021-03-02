@@ -139,7 +139,7 @@ rec {
     inherit (rust.packages.stable) rustPlatform;
   }) mkHolochainBinary holochain;
 
-  dna-util = mkHolochainBinary { crate = "dna_util"; };
+  hc = mkHolochainBinary { crate = "hc"; };
 
   kitsune-p2p-proxy = mkHolochainBinary { crate = "kitsune_p2p/proxy"; };
 
