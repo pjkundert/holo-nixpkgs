@@ -6,11 +6,11 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "holochain";
     repo = "lair";
-    rev = "be5868e6dcbe99c795a101c0e27ba6ed5edd557d";
-    sha256 = "1kkrkip3sk5pmbv1qa3c69w2q38q5pmyiamklz72czwildkvsfzp";
+    rev = "a01a40640574d3cfabae33dfe3f861de7bd7a57c";
+    sha256 = "0n5rsmpfw24g4pcgrqqxqk8fwhyky7mm3nf39vyrpk3xyxh3addr";
   };
 
-  cargoSha256 = "18cdxfzgd1j1v2ilvwpa8b6a9dh22myynqdj67bcwa1sbfvniaps";
+  cargoSha256 = "09g7p9yjz9gd203zpvd2cijxg6adciydr521c4zbfl47zm1x43f6";
 
   buildInputs = lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
     AppKit
